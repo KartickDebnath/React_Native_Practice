@@ -12,9 +12,14 @@
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import LoginScreen from './LoginScreen';
-import HomeScreen from './HomeScreen';
-import AboutScreen from './AboutScreen';
+import LoginScreen from './android/app/src/component/LoginScreen';
+import HomeScreen from './android/app/src/component/HomeScreen';
+// import AboutScreen from './AboutScreen';
+import ProfileScreen from './android/app/src/component/ProfileScreen';
+import AboutScreen from './android/app/src/component/AboutScreen';
+// import ProfileScreen from './ProfileScreen';
+// import ProfileScreen1 from './android/app/src/component/ProfileScreen';
+// import ProfileScreen from './android/app/src/component/ProfileScreen';
 // import LoginScreen from './LoginScreen';
 // import HomeScreen from './HomeScreen';
 
@@ -27,6 +32,7 @@ export default function App() {
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name='About' component={AboutScreen}/>
+        <Stack.Screen name='Profile' component={ProfileScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   );
