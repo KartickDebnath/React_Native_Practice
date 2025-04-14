@@ -1,8 +1,16 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ImageBackground,
+  Image
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import {SearchOutlined} from '@ant-design/icons';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -15,16 +23,52 @@ const HomeScreen = () => {
     navigation.navigate('About');
   };
 
-  const goToProfile=()=>{
-    navigation.navigate('Profile')
-  }
+  const goToProfile = () => {
+    navigation.navigate('Profile');
+  };
 
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.text}>HomeScreen!</Text>
-      </View>
+      <ImageBackground
+        source={require('../assets/weather.jpg')} // Adjust this path as needed
+        style={styles.background}
+        resizeMode="cover">
+        <View style={styles.content}>
+          <View style={styles.searchContainer}>
+            <Text style={styles.searchText}>Search here...</Text>
+            <Ionicons name="search-outline" size={24} color="#000" />
+          </View>
+        </View>
+        <View style={{
+          display:'flex',
+          flexDirection:'row',
+          justifyContent:'center',
+          alignItems:'center',
+          marginTop:20
+        }}>
+          {/* <Text style={{
+            fontSize:24,
+            color:'white',
+            fontWeight:500,
+          }}>Kolkata</Text> */}
+          <Text style={{
+            fontSize:24,
+            color:'white',
+            fontWeight:500,
+          }}>Hi ami Sutanu Da,dekhchilm ki korcho</Text>
+        </View>
+        <View>
+          <Image
+          source={require('../assets/cloud.png')}
+          resizeMode='cover'
+          style={{
 
+          }}
+          />
+        </View>
+      </ImageBackground>
+
+      {/* footer */}
       <View style={styles.footer}>
         <TouchableOpacity onPress={goToHome} style={styles.iconButton}>
           <AntDesignIcon name="home" size={28} color="#2196F3" />
@@ -48,7 +92,11 @@ const HomeScreen = () => {
 
 const styles = StyleSheet.create({
   container: {flex: 1, justifyContent: 'space-between'},
-  content: {flex: 1, justifyContent: 'center', alignItems: 'center'},
+  background: {
+    flex: 1,
+    // justifyContent: 'center',
+  },
+  // content: {flex: 1, justifyContent: 'center', alignItems: 'center'},
   text: {fontSize: 20},
   footer: {
     flexDirection: 'row',
@@ -60,6 +108,23 @@ const styles = StyleSheet.create({
   },
   iconButton: {alignItems: 'center'},
   iconLabel: {marginTop: 4, fontSize: 12},
+  searchContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    borderRadius: 30,
+    marginTop: 50,
+    width: '94%',
+    marginLeft: 'auto',
+    marginRight: 'auto',
+  },
+  searchText: {
+    fontSize: 16,
+    color: '#999',
+  },
 });
 
 export default HomeScreen;
