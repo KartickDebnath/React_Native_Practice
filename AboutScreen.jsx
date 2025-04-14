@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 
-const HomeScreen = () => {
+const AboutScreen = () => {
   const navigation = useNavigation();
 
   const goToHome = () => {
@@ -17,7 +17,7 @@ const HomeScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.text}>You are now logged in!</Text>
+        <Text style={styles.text}>You are now AboutScreen!</Text>
       </View>
 
       <View style={styles.footer}>
@@ -51,4 +51,4 @@ const styles = StyleSheet.create({
   iconLabel: { marginTop: 4, fontSize: 12 },
 });
 
-export default HomeScreen;
+export default AboutScreen;
