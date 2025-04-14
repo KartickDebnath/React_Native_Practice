@@ -46,23 +46,30 @@ const HomeScreen = () => {
           alignItems:'center',
           marginTop:20
         }}>
-          {/* <Text style={{
-            fontSize:24,
-            color:'white',
-            fontWeight:500,
-          }}>Kolkata</Text> */}
           <Text style={{
             fontSize:24,
             color:'white',
             fontWeight:500,
-          }}>Hi ami Sutanu Da,dekhchilm ki korcho</Text>
+          }}>Kolkata</Text>
+          {/* <Text style={{
+            fontSize:24,
+            color:'white',
+            fontWeight:500,
+          }}>Hi ami Sutanu Da,dekhchilm ki korcho</Text> */}
         </View>
-        <View>
+        <View style={{
+          display:'flex',
+          flexDirection:'row',
+          justifyContent:'center',
+          alignItems:'center',
+          marginTop:20,
+        }}>
           <Image
           source={require('../assets/cloud.png')}
           resizeMode='cover'
           style={{
-
+            width: '90%',
+            height: 300, // adjust as needed
           }}
           />
         </View>
