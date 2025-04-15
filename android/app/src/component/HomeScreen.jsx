@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useCallback} from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ImageBackground,
   Image,
   ScrollView,
+  TextInput,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
@@ -15,6 +16,9 @@ import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 // import { ScrollView } from 'react-native-gesture-handler';
+import {debounce} from 'lodash';
+// import {fatchLocation} from '../../api/weather.jsx'
+import {fetchLocation, fetchWeatherForecast} from '../../api/weather.jsx';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -32,12 +36,48 @@ const HomeScreen = () => {
   };
 
   const [search, setSearch] = useState(false);
-  const [location, setLocation] = useState([1, 2, 3]);
+  const [locations, setLocations] = useState([]);
+  const [weather, setweather] = useState({});
 
-  const handleSearch =(value)=>{
-    console.log('value',value)
-  }
+  const handleLocations = loc => {
+    console.log('locations', loc);
+    setLocations([]);
+    setSearch(false);
+    fetchWeatherForecast({
+      name: loc.name,
+    }).then(data => {
+      setweather(data);
+      console.log('data', data);
+    });
+  };
 
+  // const handleSearch = value => {
+  //   // console.log('value', value);
+  //   if(value.length>2){
+  //     fatchLocation({name: value}).then(
+  //       data=>{
+  //         setLocation(data)
+  //       }
+  //     )
+  //   }
+  // };
+
+  const handleSearch = value => {
+    if (value.length > 2) {
+      fetchLocation({name: value}).then(data => {
+        if (data) {
+          setLocations(data);
+        } else {
+          setLocations([]);
+        }
+      });
+    } else {
+      setLocations([]);
+    }
+  };
+
+  const handleTextDebounce = useCallback(debounce(handleSearch, 1200), []);
+  const {current, location} = weather;
   return (
     <View style={styles.container}>
       <ScrollView
@@ -64,26 +104,37 @@ const HomeScreen = () => {
                 ]}>
                 {search ? (
                   <>
-                    <Text style={styles.searchText}>Search</Text>
-                    <TouchableOpacity onPress={() => setSearch(false)} onChangeText={handleSearch}>
+                    {/* <Text style={styles.searchText}>Search</Text> */}
+                    <TextInput
+                      style={styles.searchInput}
+                      // value={query}
+                      onChangeText={handleTextDebounce}
+                      placeholder="Search"
+                      autoFocus
+                    />
+                    {/* <TouchableOpacity
+                      onPress={() => setSearch(false)}
+                      onChangeText={handleSearch}>
                       <Ionicons name="close-outline" size={24} color="#000" />
-                    </TouchableOpacity>
+                    </TouchableOpacity> */}
                   </>
-                ) : (
-                  <TouchableOpacity onPress={() => setSearch(true)}>
-                    <Ionicons name="search-outline" size={24} color="#000" />
-                  </TouchableOpacity>
-                )}
+                ) : null}
+                <TouchableOpacity
+                  onPress={() => setSearch(!search)}
+                  style={{paddingVertical: 10}}>
+                  <Ionicons name="search-outline" size={24} color="#000" />
+                </TouchableOpacity>
               </View>
 
               {/* Dropdown List */}
-              {location.length > 0 && search ? (
+              {locations.length > 0 && search ? (
                 <View style={styles.dropdownContainer}>
-                  {location.map((loc, index) => {
-                    const isNotLast = index + 1 !== location.length;
+                  {locations.map((loc, index) => {
+                    const isNotLast = index + 1 !== locations.length;
 
                     return (
                       <TouchableOpacity
+                        onPress={() => handleLocations(loc)}
                         key={index}
                         style={{
                           borderBottomWidth: isNotLast ? 2 : 0,
@@ -97,7 +148,9 @@ const HomeScreen = () => {
                           size={24}
                           color="#000"
                         />
-                        <Text style={styles.dropdownItem}>Kolkata</Text>
+                        <Text style={styles.dropdownItem}>
+                          {loc?.name},{loc?.country}
+                        </Text>
                       </TouchableOpacity>
                     );
                   })}
@@ -114,6 +167,7 @@ const HomeScreen = () => {
                 justifyContent: 'center',
                 alignItems: 'center',
                 flex: 1,
+                marginTop: 20,
               }}>
               <Text
                 style={{
@@ -121,7 +175,7 @@ const HomeScreen = () => {
                   fontSize: 20,
                   fontWeight: 'bold',
                 }}>
-                kolkata ,
+                {location?.name || 'Location'},
               </Text>
               <Text
                 style={{
@@ -129,7 +183,7 @@ const HomeScreen = () => {
                   fontSize: 20,
                   // fontWeight:'bold'
                 }}>
-                West Bengal
+                {location?.country || 'Country'}
               </Text>
             </View>
           </View>
@@ -143,10 +197,10 @@ const HomeScreen = () => {
               marginTop: 20,
             }}>
             <Image
-              source={require('../assets/cloud.png')}
+              source={require('../assets/heavyrain.png')}
               resizeMode="cover"
               style={{
-                width: '90%',
+                width: '80%',
                 height: 300, // adjust as needed
               }}
             />
@@ -388,6 +442,12 @@ const styles = StyleSheet.create({
   text: {
     fontSize: 20,
   },
+  searchInput: {
+    flex: 1,
+    // paddingHorizontal: 10,
+    fontSize: 16,
+    color: 'black',
+  },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -411,7 +471,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: 'white',
-    paddingVertical: 10,
+    // paddingVertical: 10,
     paddingHorizontal: 15,
     borderRadius: 30,
     marginTop: 50,
@@ -428,7 +488,7 @@ const styles = StyleSheet.create({
   },
   dropdownContainer: {
     position: 'absolute',
-    top: 110,
+    top: 120,
     width: '96%',
     backgroundColor: 'white',
     borderRadius: 15,
@@ -442,7 +502,6 @@ const styles = StyleSheet.create({
     zIndex: 10,
     alignSelf: 'center',
   },
-  
 
   dropdownItem: {
     paddingVertical: 8,
