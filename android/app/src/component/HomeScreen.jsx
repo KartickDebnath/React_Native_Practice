@@ -80,7 +80,7 @@ const HomeScreen = () => {
   return (
     <>
       <ImageBackground
-        source={require('../assets/background.jpg')}
+        source={require('../assets/weathernew.jpg')}
         style={styles.background}
         resizeMode="cover">
         {loading ? (
@@ -164,7 +164,7 @@ const HomeScreen = () => {
 
             {/* TEMP */}
             <View style={{marginTop: 20}}>
-              <Text style={styles.tempText}>{current?.temp_c}°</Text>
+              <Text style={styles.tempText}>{current?.temp_c || 'Temperature'}°C</Text>
               <Text style={styles.conditionText}>
                 {current?.condition?.text}
               </Text>
@@ -183,7 +183,6 @@ const HomeScreen = () => {
               <View style={styles.statsItem}>
                 <Feather name="sun" size={24} color="white" />
                 <Text style={styles.statsText}>
-                  {' '}
                   {weather?.forecast?.forecastday?.[0]?.astro?.sunset}
                 </Text>
               </View>
@@ -223,7 +222,7 @@ const HomeScreen = () => {
                           })}
                         </Text>
                         <Text style={{color: 'white'}}>
-                          {isToday ? current?.temp_c : item?.day?.avgtemp_c}°
+                          {isToday ? current?.temp_c : item?.day?.avgtemp_c}°C
                         </Text>
                       </View>
                     );
@@ -357,14 +356,17 @@ const styles = StyleSheet.create({
     marginTop: 40,
   },
   forecastCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: 'rgba(15, 15, 15, 0.7)', // more transparent
     alignItems: 'center',
     marginTop: 50,
     height: 140,
     width: 100,
     paddingHorizontal: 5,
     paddingVertical: 10,
-    borderRadius: 10,
+    borderRadius: 15, // more rounded
+    borderWidth: 1,
+    borderColor: 'rgba(255, 255, 255, 0.3)', // subtle border for clarity
+    backdropFilter: 'blur(10px)', // web only
   },
   forecastImage: {
     width: 80,
@@ -372,7 +374,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
   },
   forecastEmptyCard: {
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    backgroundColor: 'rgba(15, 15, 15, 0.7)', // more transparent
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 50,
@@ -381,6 +383,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     paddingVertical: 15,
     borderRadius: 10,
+    borderColor: 'rgba(255, 255, 255, 0.3)', // subtle border for clarity
+    backdropFilter: 'blur(10px)', // web only
   },
   footer: {
     flexDirection: 'row',

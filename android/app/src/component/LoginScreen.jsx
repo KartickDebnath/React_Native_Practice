@@ -29,14 +29,15 @@ const LoginScreen = ({ navigation }) => {
 
   return (
     <ImageBackground
-      source={{
-        uri: 'https://images.unsplash.com/photo-1508919801845-fc2ae1bc2a28?auto=format&fit=crop&w=800&q=80',
-      }}
+      // source={{
+      //   uri: 'https://images.unsplash.com/photo-1508919801845-fc2ae1bc2a28?auto=format&fit=crop&w=800&q=80',
+      // }}
       style={styles.background}
+      source={require('../assets/loginbackground.jpg')}
       resizeMode="cover"
     >
       <SafeAreaView style={styles.overlay}>
-        <Text style={styles.title}>Welcome Back!</Text>
+        <Text style={styles.title}>Welcome!</Text>
         <Text style={styles.subtitle}>
           Continue tracking your progress after logging in to your account.
         </Text>
@@ -48,7 +49,7 @@ const LoginScreen = ({ navigation }) => {
           <TextInput
             style={styles.input}
             placeholder="Enter your username"
-            placeholderTextColor="#999"
+            placeholderTextColor="#fff"
             value={username}
             onChangeText={setUsername}
           />
@@ -58,7 +59,7 @@ const LoginScreen = ({ navigation }) => {
             <TextInput
               style={[styles.input, { flex: 1 }]}
               placeholder="Enter your password"
-              placeholderTextColor="#999"
+              placeholderTextColor="#fff"
               secureTextEntry={!showPassword}
               value={password}
               onChangeText={setPassword}
@@ -95,40 +96,42 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 24,
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
+    // backgroundColor: 'rgba(255, 255, 255, 0.85)',
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 10,
-    color: '#000',
+    color: '#ffff',
   },
   subtitle: {
     textAlign: 'center',
-    color: '#444',
+    color: '#ffff',
     marginBottom: 30,
   },
   formBox: {
     backgroundColor: '#fff',
     borderRadius: 12,
     padding: 20,
-    elevation: 5,
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    shadowOffset: { width: 0, height: 2 },
+    // elevation: 5,
+    // shadowColor: '#000',
+    // shadowOpacity: 0.15,
+    // shadowRadius: 6,
+    // shadowOffset: { width: 0, height: 2 },
+    backgroundColor: 'rgba(14, 12, 12, 0.5)',
+backdropFilter: 'blur(5px)',
   },
   formTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#333',
+    color: '#ffff',
   },
   label: {
     marginTop: 10,
     fontWeight: '600',
-    color: '#222',
+    color: '#ffff',
   },
   input: {
     borderWidth: 1,
@@ -138,7 +141,7 @@ const styles = StyleSheet.create({
     paddingVertical: Platform.OS === 'ios' ? 12 : 8,
     marginTop: 6,
     fontSize: 15,
-    color: '#000',
+    color: '#ffff',
   },
   passwordContainer: {
     flexDirection: 'row',
@@ -158,11 +161,11 @@ const styles = StyleSheet.create({
   rememberText: {
     marginLeft: 6,
     fontSize: 13,
-    color: '#555',
+    color: '#ffff',
   },
   forgotText: {
     fontSize: 13,
-    color: '#555',
+    color: '#ffff',
   },
   loginButton: {
     backgroundColor: '#B92025',
