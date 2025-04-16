@@ -19,6 +19,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign';
 import {debounce} from 'lodash';
 // import {fatchLocation} from '../../api/weather.jsx'
 import {fetchLocation, fetchWeatherForecast} from '../../api/weather.jsx';
+import {weatherImage} from '../../constants/index.jsx';
 
 const HomeScreen = () => {
   const navigation = useNavigation();
@@ -45,6 +46,7 @@ const HomeScreen = () => {
     setSearch(false);
     fetchWeatherForecast({
       name: loc.name,
+      days: 7, // 🛠 Important: fetch 7 days of forecast
     }).then(data => {
       setweather(data);
       console.log('data', data);
@@ -80,12 +82,9 @@ const HomeScreen = () => {
   const {current, location} = weather;
   return (
     <View style={styles.container}>
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        // contentContainerStyle={{ paddingBottom: 100 }}
-      >
+      <ScrollView showsVerticalScrollIndicator={false}>
         <ImageBackground
-          source={require('../assets/background.jpg')} // Adjust this path as needed
+          source={require('../assets/background.jpg')}
           style={styles.background}
           resizeMode="cover">
           <View style={styles.content}>
@@ -104,19 +103,12 @@ const HomeScreen = () => {
                 ]}>
                 {search ? (
                   <>
-                    {/* <Text style={styles.searchText}>Search</Text> */}
                     <TextInput
                       style={styles.searchInput}
-                      // value={query}
                       onChangeText={handleTextDebounce}
                       placeholder="Search"
                       autoFocus
                     />
-                    {/* <TouchableOpacity
-                      onPress={() => setSearch(false)}
-                      onChangeText={handleSearch}>
-                      <Ionicons name="close-outline" size={24} color="#000" />
-                    </TouchableOpacity> */}
                   </>
                 ) : null}
                 <TouchableOpacity
@@ -181,7 +173,6 @@ const HomeScreen = () => {
                 style={{
                   color: 'white',
                   fontSize: 20,
-                  // fontWeight:'bold'
                 }}>
                 {location?.country || 'Country'}
               </Text>
@@ -197,16 +188,19 @@ const HomeScreen = () => {
               marginTop: 20,
             }}>
             <Image
-              source={require('../assets/heavyrain.png')}
+              source={weatherImage[current?.condition?.text]}
               resizeMode="cover"
               style={{
-                width: '80%',
-                height: 300, // adjust as needed
+                width: '60%',
+                height: 250,
               }}
             />
           </View>
           {/* degree  */}
-          <View>
+          <View
+            style={{
+              marginTop: 20,
+            }}>
             <Text
               style={{
                 textAlign: 'center',
@@ -214,18 +208,15 @@ const HomeScreen = () => {
                 color: 'white',
                 fontSize: 30,
               }}>
-              {' '}
-              23°
+              {current?.temp_c}°
             </Text>
             <Text
               style={{
                 textAlign: 'center',
-                // fontWeight:'bold',
                 color: 'white',
                 fontSize: 22,
               }}>
-              {' '}
-              Partly cloudy
+              {current?.condition?.text}
             </Text>
           </View>
           {/* other status */}
@@ -246,7 +237,9 @@ const HomeScreen = () => {
                 gap: 5,
               }}>
               <FontAwesome5 name="wind" size={24} color="white" />
-              <Text style={{fontSize: 16, color: 'white'}}>22km</Text>
+              <Text style={{fontSize: 16, color: 'white'}}>
+                {current?.wind_kph} km
+              </Text>
             </View>
             <View
               style={{
@@ -256,7 +249,9 @@ const HomeScreen = () => {
                 gap: 5,
               }}>
               <Ionicons name="water-outline" size={24} color="white" />
-              <Text style={{fontSize: 16, color: 'white'}}>23%</Text>
+              <Text style={{fontSize: 16, color: 'white'}}>
+                {current?.humidity}%
+              </Text>
             </View>
             <View
               style={{
@@ -276,7 +271,7 @@ const HomeScreen = () => {
               flexDirection: 'row',
               alignItems: 'center',
               gap: 10,
-              marginLeft: 10,
+              marginLeft: 20,
               marginTop: 40,
             }}>
             <AntDesign name="calendar" size={28} color="#ffff" />
@@ -289,121 +284,59 @@ const HomeScreen = () => {
             showsHorizontalScrollIndicator={false}
             style={{marginBottom: 20}}>
             <View style={{display: 'flex', flexDirection: 'row', gap: 15}}>
-              {/* 1 */}
-              <View
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.15)', // semi-transparent white
-                  alignItems: 'center',
-                  marginTop: 50,
-                  height: 140,
-                  width: 100,
-                  paddingHorizontal: 5,
-                  paddingVertical: 10,
-                  borderRadius: 10,
-                }}>
-                <Image
-                  source={require('../assets/cloud.png')}
+              {weather?.forecast?.forecastday?.length > 0 ? (
+                weather.forecast.forecastday.map((item, index) => (
+                  <View
+                    key={index}
+                    style={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                      alignItems: 'center',
+                      marginTop: 50,
+                      height: 140,
+                      width: 100,
+                      paddingHorizontal: 5,
+                      paddingVertical: 10,
+                      borderRadius: 10,
+                    }}>
+                    <Image
+                      source={weatherImage[item?.day?.condition?.text]}
+                      style={{
+                        width: 80,
+                        height: 80,
+                        resizeMode: 'contain',
+                      }}
+                    />
+                    <Text style={{color: 'white'}}>
+                      {new Date(item.date).toLocaleDateString('en-GB', {
+                        weekday: 'short',
+                        day: 'numeric',
+                        month: 'short',
+                      })}
+                    </Text>
+                    <Text style={{color: 'white'}}>
+                      {item?.day?.avgtemp_c}°
+                    </Text>
+                  </View>
+                ))
+              ) : (
+                <View
                   style={{
-                    width: 80,
-                    height: 80,
-                    resizeMode: 'contain',
-                  }}
-                />
-                <Text style={{color: 'white'}}>Monday</Text>
-                <Text style={{color: 'white'}}>23°</Text>
-              </View>
-              {/* 2 */}
-              <View
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.15)', // semi-transparent white
-                  alignItems: 'center',
-                  marginTop: 50,
-                  height: 140,
-                  width: 100,
-                  paddingHorizontal: 5,
-                  paddingVertical: 10,
-                  borderRadius: 10,
-                }}>
-                <Image
-                  source={require('../assets/cloud.png')}
-                  style={{
-                    width: 80,
-                    height: 80,
-                    resizeMode: 'contain',
-                  }}
-                />
-                <Text style={{color: 'white'}}>Monday</Text>
-                <Text style={{color: 'white'}}>23°</Text>
-              </View>
-              {/* 3 */}
-              <View
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.15)', // semi-transparent white
-                  alignItems: 'center',
-                  marginTop: 50,
-                  height: 140,
-                  width: 100,
-                  paddingHorizontal: 5,
-                  paddingVertical: 10,
-                  borderRadius: 10,
-                }}>
-                <Image
-                  source={require('../assets/cloud.png')}
-                  style={{
-                    width: 80,
-                    height: 80,
-                    resizeMode: 'contain',
-                  }}
-                />
-                <Text style={{color: 'white'}}>Monday</Text>
-                <Text style={{color: 'white'}}>23°</Text>
-              </View>
-              {/* 4 */}
-              <View
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.15)', // semi-transparent white
-                  alignItems: 'center',
-                  marginTop: 50,
-                  height: 140,
-                  width: 100,
-                  paddingHorizontal: 5,
-                  paddingVertical: 10,
-                  borderRadius: 10,
-                }}>
-                <Image
-                  source={require('../assets/cloud.png')}
-                  style={{
-                    width: 80,
-                    height: 80,
-                    resizeMode: 'contain',
-                  }}
-                />
-                <Text style={{color: 'white'}}>Monday</Text>
-                <Text style={{color: 'white'}}>23°</Text>
-              </View>
-              {/* 5 */}
-              <View
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.15)', // semi-transparent white
-                  alignItems: 'center',
-                  marginTop: 50,
-                  height: 140,
-                  width: 100,
-                  paddingHorizontal: 5,
-                  paddingVertical: 10,
-                  borderRadius: 10,
-                }}>
-                <Image
-                  source={require('../assets/cloud.png')}
-                  style={{
-                    width: 80,
-                    height: 80,
-                    resizeMode: 'contain',
-                  }}
-                />
-                <Text style={{color: 'white'}}>Monday</Text>
-                <Text style={{color: 'white'}}>23°</Text>
-              </View>
+                    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    marginTop: 50,
+                    height: 140,
+                    width: 120,
+                    paddingHorizontal: 10,
+                    paddingVertical: 15,
+                    borderRadius: 10,
+                  }}>
+                  <Text style={{color: 'white', textAlign: 'center'}}>
+                    Search a location to view forecast
+                  </Text>
+                </View>
+              )}
+
             </View>
           </ScrollView>
         </ImageBackground>
