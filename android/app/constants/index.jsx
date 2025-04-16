@@ -10,6 +10,7 @@ export const weatherImage={
     'Sunny':require('../src/assets/sun.png'),
     'Clear':require('../src/assets/sun.png'),
     'Partly cloudy':require('../src/assets/partlycloudy.png'),
+    'Partly Cloudy':require('../src/assets/partlycloudy.png'),
     'Partly Cloudy ':require('../src/assets/partlycloudy.png'),
     'Patchy rain possible':require('../src/assets/moderaterain.png'),
     'Patchy rain nearby':require('../src/assets/moderaterain.png'),
