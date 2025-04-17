@@ -28,6 +28,9 @@
 
 import axios from 'axios';
 import { apiKey } from '../constants';
+import {
+  Alert,
+} from 'react-native';
 
 const forecastEndpoint = (params) =>
   `http://api.weatherapi.com/v1/forecast.json?key=${apiKey}&q=${params.name}&days=${params.days}&aqi=no&alerts=no`;
@@ -50,5 +53,7 @@ export const fetchWeatherForecast = (params) => {
 };
 
 export const fetchLocation = (params) => {
+  // Alert.alert("in api call looking for = "+params);
+  // Alert.alert("found result length = "+apiCall(locationEndPoint(params)).length);
   return apiCall(locationEndPoint(params));
 };

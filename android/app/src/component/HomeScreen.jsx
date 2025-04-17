@@ -10,6 +10,7 @@ import {
   TextInput,
   ActivityIndicator,
   Dimensions,
+  Alert,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
@@ -38,6 +39,7 @@ const HomeScreen = () => {
     setLocations([]);
     setSearch(false);
     setLoading(true);
+    // Alert.alert('hiii')
 
     fetchWeatherForecast({
       name: loc.name,
@@ -53,6 +55,7 @@ const HomeScreen = () => {
   };
 
   const handleSearch = value => {
+    // Alert.alert("current size = "+value.length);
     if (value.length > 2) {
       fetchLocation({name: value}).then(data => {
         setLocations(data || []);
