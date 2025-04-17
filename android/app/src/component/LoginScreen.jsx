@@ -37,7 +37,7 @@ const LoginScreen = ({ navigation }) => {
       resizeMode="cover"
     >
       <SafeAreaView style={styles.overlay}>
-        <Text style={styles.title}>Welcome!</Text>
+        <Text style={styles.title}>Welcome To!</Text>
         <Text style={styles.subtitle}>
           Continue tracking your progress after logging in to your account.
         </Text>

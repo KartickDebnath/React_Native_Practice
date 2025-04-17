@@ -95,6 +95,7 @@ const HomeScreen = () => {
                   <TouchableOpacity onPress={() => setSearch(!search)} style={{paddingVertical: height * 0.01}}>
                     <Ionicons name="search-outline" size={24} color="#000" />
                   </TouchableOpacity>
+                  
                 </View>
 
                 {locations.length > 0 && search && (
@@ -124,6 +125,7 @@ const HomeScreen = () => {
               </View>
 
               <View style={styles.locationBox}>
+                {/* <Text style={styles.locationText}>{location?.name || 'Location'},</Text> */}
                 <Text style={styles.locationText}>{location?.name || 'Location'},</Text>
                 <Text style={styles.locationText}>{location?.country || 'Country'}</Text>
               </View>
