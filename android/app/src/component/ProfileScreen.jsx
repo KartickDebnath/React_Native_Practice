@@ -43,6 +43,10 @@ const ProfileScreen = () => {
   const togglenotificationsDetails = () =>
     setShownotificationsDetails(!shownotificationsDetails);
 
+  const handleSignOut = () => {
+    navigation.navigate('Login'); // Replace 'Login' with the actual name of your login screen
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView
@@ -204,13 +208,11 @@ const ProfileScreen = () => {
             )}
           </View>
           {/* signout */}
-          <View style={styles.signout}>
+          <TouchableOpacity style={styles.signout} onPress={handleSignOut}>
             <IoniconsSignout name="exit-outline" size={24} color="#000" />
             <Text style={styles.mobilename}>Sign Out</Text>
             <View style={{flex: 1}} />
-            {/* <AntDesign name="right" size={24} color="#000" /> */}
-            {/* <Text style={styles.email}>UID - KT2503TA</Text> */}
-          </View>
+          </TouchableOpacity>
         </View>
       </ScrollView>
       {/* Footer Navigation */}
@@ -250,7 +252,7 @@ const styles = StyleSheet.create({
     // borderRadius: 12,
     alignItems: 'center',
     width: '100%',
-    marginTop:30
+    marginTop: 30,
     // elevation: 5, // shadow for Android
     // shadowColor: '#000', // shadow for iOS
     // shadowOffset: { width: 0, height: 2 },
@@ -290,7 +292,7 @@ const styles = StyleSheet.create({
     justifyContent: 'left',
     alignItems: 'center',
     gap: 10,
-    marginBottom:20,
+    marginBottom: 20,
   },
   mobileOpen: {
     backgroundColor: 'rgb(228, 232, 236)',
