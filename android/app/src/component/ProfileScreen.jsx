@@ -27,7 +27,7 @@ const ProfileScreen = () => {
           style={styles.avatar}
         />
         <Text style={styles.name}>John Doe</Text>
-        <Text style={styles.email}>john.doe@example.com</Text>
+        <Text style={styles.email}>abc@example.com</Text>
       </View>
 
       <View style={styles.footer}>

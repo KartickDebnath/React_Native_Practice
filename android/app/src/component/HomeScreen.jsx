@@ -9,6 +9,7 @@ import {
   ScrollView,
   TextInput,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
@@ -20,19 +21,13 @@ import {debounce} from 'lodash';
 import {fetchLocation, fetchWeatherForecast} from '../../api/weather.jsx';
 import {weatherImage} from '../../constants/index.jsx';
 
+const {width, height} = Dimensions.get('window');
+
 const HomeScreen = () => {
   const navigation = useNavigation();
-  const goToHome = () => {
-    navigation.navigate('Home');
-  };
-
-  const goToAbout = () => {
-    navigation.navigate('About');
-  };
-
-  const goToProfile = () => {
-    navigation.navigate('Profile');
-  };
+  const goToHome = () => navigation.navigate('Home');
+  const goToAbout = () => navigation.navigate('About');
+  const goToProfile = () => navigation.navigate('Profile');
 
   const [search, setSearch] = useState(false);
   const [locations, setLocations] = useState([]);
@@ -40,7 +35,6 @@ const HomeScreen = () => {
   const [loading, setLoading] = useState(false);
 
   const handleLocations = loc => {
-    console.log('locations', loc);
     setLocations([]);
     setSearch(false);
     setLoading(true);
@@ -55,19 +49,13 @@ const HomeScreen = () => {
           setLoading(false);
         }, 500);
       })
-      .catch(() => {
-        setLoading(false);
-      });
+      .catch(() => setLoading(false));
   };
 
   const handleSearch = value => {
     if (value.length > 2) {
       fetchLocation({name: value}).then(data => {
-        if (data) {
-          setLocations(data);
-        } else {
-          setLocations([]);
-        }
+        setLocations(data || []);
       });
     } else {
       setLocations([]);
@@ -89,30 +77,24 @@ const HomeScreen = () => {
           </View>
         ) : (
           <>
-            {/* SEARCH */}
             <View style={styles.content}>
               <View style={styles.searchBoxWrapper}>
-                <View
-                  style={[
-                    styles.searchContainer,
-                    search && styles.expandedSearch,
-                  ]}>
+                <View style={[styles.searchContainer, search && styles.expandedSearch]}>
                   {search ? (
                     <TextInput
                       style={styles.searchInput}
                       onChangeText={handleTextDebounce}
                       placeholder="Search"
+                      placeholderTextColor="#888"
                       autoFocus
                     />
                   ) : null}
-                  <TouchableOpacity
-                    onPress={() => setSearch(!search)}
-                    style={{paddingVertical: 10}}>
+                  <TouchableOpacity onPress={() => setSearch(!search)} style={{paddingVertical: height * 0.01}}>
                     <Ionicons name="search-outline" size={24} color="#000" />
                   </TouchableOpacity>
                 </View>
 
-                {locations.length > 0 && search ? (
+                {locations.length > 0 && search && (
                   <View style={styles.dropdownContainer}>
                     {locations.map((loc, index) => {
                       const isNotLast = index + 1 !== locations.length;
@@ -125,13 +107,9 @@ const HomeScreen = () => {
                             borderBottomColor: 'gray',
                             flexDirection: 'row',
                             alignItems: 'center',
-                            paddingVertical: 5,
+                            paddingVertical: height * 0.008,
                           }}>
-                          <Ionicons
-                            name="location-outline"
-                            size={24}
-                            color="#000"
-                          />
+                          <Ionicons name="location-outline" size={24} color="#000" />
                           <Text style={styles.dropdownItem}>
                             {loc?.name}, {loc?.country}
                           </Text>
@@ -139,38 +117,28 @@ const HomeScreen = () => {
                       );
                     })}
                   </View>
-                ) : null}
+                )}
               </View>
 
-              {/* LOCATION */}
               <View style={styles.locationBox}>
-                <Text style={styles.locationText}>
-                  {location?.name || 'Location'},
-                </Text>
-                <Text style={styles.locationText}>
-                  {location?.country || 'Country'}
-                </Text>
+                <Text style={styles.locationText}>{location?.name || 'Location'},</Text>
+                <Text style={styles.locationText}>{location?.country || 'Country'}</Text>
               </View>
             </View>
 
-            {/* WEATHER ICON */}
             <View style={styles.weatherIconBox}>
               <Image
                 source={weatherImage[current?.condition?.text]}
-                resizeMode="cover"
-                style={{width: '60%', height: 250}}
+                resizeMode="contain"
+                style={styles.weatherIcon}
               />
             </View>
 
-            {/* TEMP */}
-            <View style={{marginTop: 20}}>
+            <View style={{marginTop: height * 0.02}}>
               <Text style={styles.tempText}>{current?.temp_c || 'Temperature'}°C</Text>
-              <Text style={styles.conditionText}>
-                {current?.condition?.text}
-              </Text>
+              <Text style={styles.conditionText}>{current?.condition?.text}</Text>
             </View>
 
-            {/* STATS */}
             <View style={styles.statsRow}>
               <View style={styles.statsItem}>
                 <FontAwesome5 name="wind" size={24} color="white" />
@@ -188,22 +156,20 @@ const HomeScreen = () => {
               </View>
             </View>
 
-            {/* DAILY FORECAST */}
             <View style={styles.forecastLabel}>
               <AntDesign name="calendar" size={28} color="#fff" />
-              <Text style={{color: '#fff', fontSize: 16}}>Daily forecast</Text>
+              <Text style={styles.forecastLabelText}>Daily forecast</Text>
             </View>
 
             <ScrollView
               horizontal
-              contentContainerStyle={{paddingHorizontal: 15}}
+              contentContainerStyle={{paddingHorizontal: width * 0.04}}
               showsHorizontalScrollIndicator={false}
-              style={{marginBottom: 20}}>
-              <View style={{flexDirection: 'row', gap: 15}}>
+              style={{marginBottom: height * 0.02}}>
+              <View style={{flexDirection: 'row', gap: width * 0.03}}>
                 {weather?.forecast?.forecastday?.length > 0 ? (
                   weather.forecast.forecastday.map((item, index) => {
-                    const isToday =
-                      item.date === new Date().toISOString().split('T')[0]; // 'YYYY-MM-DD'
+                    const isToday = item.date === new Date().toISOString().split('T')[0];
                     return (
                       <View key={index} style={styles.forecastCard}>
                         <Image
@@ -214,14 +180,14 @@ const HomeScreen = () => {
                           }
                           style={styles.forecastImage}
                         />
-                        <Text style={{color: 'white'}}>
+                        <Text style={styles.forecastCardText}>
                           {new Date(item.date).toLocaleDateString('en-GB', {
                             weekday: 'short',
                             day: 'numeric',
                             month: 'short',
                           })}
                         </Text>
-                        <Text style={{color: 'white'}}>
+                        <Text style={styles.forecastCardText}>
                           {isToday ? current?.temp_c : item?.day?.avgtemp_c}°C
                         </Text>
                       </View>
@@ -229,9 +195,7 @@ const HomeScreen = () => {
                   })
                 ) : (
                   <View style={styles.forecastEmptyCard}>
-                    <Text style={{color: 'white', textAlign: 'center'}}>
-                      Search a location to view forecast
-                    </Text>
+                    <Text style={{color: 'white', textAlign: 'center'}}>Search a location to view forecast</Text>
                   </View>
                 )}
               </View>
@@ -239,7 +203,7 @@ const HomeScreen = () => {
           </>
         )}
       </ImageBackground>
-      {/* footer */}
+
       <View style={styles.footer}>
         <TouchableOpacity onPress={goToHome} style={styles.iconButton}>
           <AntDesignIcon name="home" size={28} color="#2196F3" />
@@ -252,7 +216,6 @@ const HomeScreen = () => {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={goToProfile} style={styles.iconButton}>
-          {/* <AntDesignIcon name="infocirlceo" size={28} color="#2196F3" /> */}
           <Ionicons name="person-outline" size={28} color="#2196F3" />
           <Text style={styles.iconLabel}>Profile</Text>
         </TouchableOpacity>
@@ -262,145 +225,84 @@ const HomeScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  background: {
-    flex: 1,
-  },
-  loader: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  content: {
-    paddingHorizontal: 20,
-    paddingTop: 50,
-  },
-  searchBoxWrapper: {
-    alignItems: 'flex-end',
-    position: 'relative',
-  },
+  background: { flex: 1 },
+  loader: { flex: 1, justifyContent: 'center', alignItems: 'center' },
+  content: { paddingHorizontal: width * 0.05, paddingTop: height * 0.06 },
+  searchBoxWrapper: { alignItems: 'flex-end', position: 'relative' },
   searchContainer: {
     flexDirection: 'row',
     backgroundColor: 'white',
-    borderRadius: 50,
-    paddingHorizontal: 15,
+    borderRadius: 30,
+    paddingHorizontal: width * 0.04,
     alignItems: 'center',
   },
-  expandedSearch: {
-    width: '100%',
-  },
+  expandedSearch: { width: '100%' },
   searchInput: {
     flex: 1,
-    paddingVertical: 8,
-    paddingRight: 10,
+    fontSize: width * 0.04,
+    paddingVertical: height * 0.01,
+    color: '#000', // Ensures visibility on all devices
   },
   dropdownContainer: {
     backgroundColor: 'white',
-    padding: 10,
+    padding: width * 0.04,
     borderRadius: 10,
     position: 'absolute',
-    top: 60,
+    top: height * 0.07,
     width: '100%',
     zIndex: 20,
   },
-  dropdownItem: {
-    fontSize: 16,
-    marginLeft: 10,
-  },
-  locationBox: {
-    marginTop: 20,
-    flexDirection: 'row',
-    justifyContent: 'center',
-  },
-  locationText: {
-    color: 'white',
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginHorizontal: 4,
-  },
-  weatherIconBox: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  tempText: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    color: 'white',
-    fontSize: 30,
-  },
-  conditionText: {
-    textAlign: 'center',
-    color: 'white',
-    fontSize: 22,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 30,
-    marginTop: 20,
-  },
-  statsItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 5,
-  },
-  statsText: {
-    fontSize: 16,
-    color: 'white',
-  },
+  dropdownItem: { fontSize: width * 0.04, marginLeft: width * 0.02 },
+  locationBox: { marginTop: height * 0.03, flexDirection: 'row', justifyContent: 'center' },
+  locationText: { color: 'white', fontSize: width * 0.045, fontWeight: 'bold', marginHorizontal: width * 0.01 },
+  weatherIconBox: { justifyContent: 'center', alignItems: 'center', marginTop: height * 0.02 },
+  weatherIcon: { width: width * 0.6, height: height * 0.2 },
+  tempText: { textAlign: 'center', fontWeight: 'bold', color: 'white', fontSize: width * 0.09 },
+  conditionText: { textAlign: 'center', color: 'white', fontSize: width * 0.045 },
+  statsRow: { flexDirection: 'row', justifyContent: 'space-evenly', marginTop: height * 0.02 },
+  statsItem: { flexDirection: 'row', alignItems: 'center', gap: width * 0.01 },
+  statsText: { fontSize: width * 0.035, color: 'white' },
   forecastLabel: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 10,
-    marginLeft: 20,
-    marginTop: 40,
+    gap: width * 0.02,
+    marginLeft: width * 0.05,
+    marginTop: height * 0.03,
   },
+  forecastLabelText: { color: '#fff', fontSize: width * 0.04 },
   forecastCard: {
-    backgroundColor: 'rgba(15, 15, 15, 0.7)', // more transparent
+    backgroundColor: 'rgba(15, 15, 15, 0.7)',
     alignItems: 'center',
-    marginTop: 50,
-    height: 140,
-    width: 100,
-    paddingHorizontal: 5,
-    paddingVertical: 10,
-    borderRadius: 15, // more rounded
+    marginTop: height * 0.04,
+    height: height * 0.15,
+    width: width * 0.25,
+    padding: width * 0.02,
+    borderRadius: 15,
     borderWidth: 1,
-    borderColor: 'rgba(255, 255, 255, 0.3)', // subtle border for clarity
-    backdropFilter: 'blur(10px)', // web only
+    borderColor: 'rgba(255, 255, 255, 0.3)',
   },
-  forecastImage: {
-    width: 80,
-    height: 80,
-    resizeMode: 'contain',
-  },
+  forecastCardText: { color: 'white', textAlign: 'center', fontSize: width * 0.035 },
+  forecastImage: { width: width * 0.13, height: height * 0.07, resizeMode: 'contain' },
   forecastEmptyCard: {
-    backgroundColor: 'rgba(15, 15, 15, 0.7)', // more transparent
+    backgroundColor: 'rgba(15, 15, 15, 0.7)',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 50,
-    height: 140,
-    width: 120,
-    paddingHorizontal: 10,
-    paddingVertical: 15,
+    marginTop: height * 0.04,
+    height: height * 0.18,
+    width: width * 0.3,
+    paddingHorizontal: width * 0.04,
     borderRadius: 10,
-    borderColor: 'rgba(255, 255, 255, 0.3)', // subtle border for clarity
-    backdropFilter: 'blur(10px)', // web only
   },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingVertical: 10,
+    paddingVertical: height * 0.015,
     borderTopWidth: 1,
     borderColor: '#ddd',
     backgroundColor: '#f9f9f9',
   },
-  iconButton: {
-    alignItems: 'center',
-  },
-  iconLabel: {
-    marginTop: 4,
-    fontSize: 12,
-  },
+  iconButton: { alignItems: 'center' },
+  iconLabel: { marginTop: height * 0.005, fontSize: width * 0.03 },
 });
 
 export default HomeScreen;
