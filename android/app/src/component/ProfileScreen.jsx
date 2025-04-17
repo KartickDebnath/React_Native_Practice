@@ -1,8 +1,7 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, Image} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
-// import UserOutline from 'react-native-vector-icons/UserOutline';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const ProfileScreen = () => {
@@ -23,7 +22,12 @@ const ProfileScreen = () => {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.text}>ProfileScreen!</Text>
+        <Image
+          source={{uri: 'https://via.placeholder.com/100'}}
+          style={styles.avatar}
+        />
+        <Text style={styles.name}>John Doe</Text>
+        <Text style={styles.email}>john.doe@example.com</Text>
       </View>
 
       <View style={styles.footer}>
@@ -38,7 +42,6 @@ const ProfileScreen = () => {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={goToProfile} style={styles.iconButton}>
-          {/* <AntDesignIcon name="infocirlceo" size={28} color="#2196F3" /> */}
           <Ionicons name="person-outline" size={28} color="#2196F3" />
           <Text style={styles.iconLabel}>Profile</Text>
         </TouchableOpacity>
@@ -49,8 +52,28 @@ const ProfileScreen = () => {
 
 const styles = StyleSheet.create({
   container: {flex: 1, justifyContent: 'space-between'},
-  content: {flex: 1, justifyContent: 'center', alignItems: 'center'},
-  text: {fontSize: 20},
+  content: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+  },
+  avatar: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    marginBottom: 20,
+    backgroundColor: '#ccc',
+  },
+  name: {
+    fontSize: 22,
+    fontWeight: '600',
+    marginBottom: 8,
+  },
+  email: {
+    fontSize: 16,
+    color: '#666',
+  },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',

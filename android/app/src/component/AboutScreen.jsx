@@ -1,5 +1,5 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity} from 'react-native';
+import {View, Text, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -7,23 +7,31 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 const AboutScreen = () => {
   const navigation = useNavigation();
 
-  const goToHome = () => {
-    navigation.navigate('Home');
-  };
-
-  const goToAbout = () => {
-    navigation.navigate('About');
-  };
-
-  const goToProfile=()=>{
-    navigation.navigate('Profile')
-  }
+  const goToHome = () => navigation.navigate('Home');
+  const goToAbout = () => navigation.navigate('About');
+  const goToProfile = () => navigation.navigate('Profile');
 
   return (
     <View style={styles.container}>
-      <View style={styles.content}>
-        <Text style={styles.text}>AboutScreen!</Text>
-      </View>
+      <ScrollView contentContainerStyle={styles.content}>
+        <Text style={styles.title}>🌦️ Weather App</Text>
+        <Text style={styles.description}>
+          This app provides real-time weather updates, forecasts, and location-based weather info. You can search any city worldwide and view the current temperature, weather conditions, and a 7-day forecast.
+        </Text>
+
+        <Text style={styles.sectionTitle}>Key Features:</Text>
+        <Text style={styles.feature}>• 🔍 Search weather by location</Text>
+        <Text style={styles.feature}>• 📍 View current location weather</Text>
+        <Text style={styles.feature}>• 📅 7-day forecast</Text>
+        <Text style={styles.feature}>• ☁️ Dynamic weather icons</Text>
+        <Text style={styles.feature}>• 🌓 Sunrise, sunset, and moon phase</Text>
+
+        <Text style={styles.sectionTitle}>Built With:</Text>
+        <Text style={styles.feature}>• ⚛️ React Native CLI</Text>
+        <Text style={styles.feature}>• 🌐 WeatherAPI</Text>
+        <Text style={styles.feature}>• 🧭 React Navigation</Text>
+        <Text style={styles.feature}>• 🎨 Custom UI & Icons</Text>
+      </ScrollView>
 
       <View style={styles.footer}>
         <TouchableOpacity onPress={goToHome} style={styles.iconButton}>
@@ -37,7 +45,6 @@ const AboutScreen = () => {
         </TouchableOpacity>
 
         <TouchableOpacity onPress={goToProfile} style={styles.iconButton}>
-          {/* <AntDesignIcon name="infocirlceo" size={28} color="#2196F3" /> */}
           <Ionicons name="person-outline" size={28} color="#2196F3" />
           <Text style={styles.iconLabel}>Profile</Text>
         </TouchableOpacity>
@@ -48,8 +55,35 @@ const AboutScreen = () => {
 
 const styles = StyleSheet.create({
   container: {flex: 1, justifyContent: 'space-between'},
-  content: {flex: 1, justifyContent: 'center', alignItems: 'center'},
-  text: {fontSize: 20},
+  content: {
+    padding: 20,
+    paddingBottom: 100,
+  },
+  title: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color: '#2196F3',
+    marginBottom: 10,
+  },
+  description: {
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 20,
+    lineHeight: 22,
+  },
+  sectionTitle: {
+    fontSize: 18,
+    fontWeight: '600',
+    marginTop: 10,
+    marginBottom: 5,
+    color: '#444',
+  },
+  feature: {
+    fontSize: 15,
+    marginLeft: 10,
+    marginBottom: 5,
+    color: '#555',
+  },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
