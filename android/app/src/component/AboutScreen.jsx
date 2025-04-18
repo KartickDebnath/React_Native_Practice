@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-nati
 import { useNavigation, useRoute } from '@react-navigation/native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import MapView, { Marker } from 'react-native-maps';
 
 const AboutScreen = () => {
   const navigation = useNavigation();
@@ -13,13 +14,31 @@ const AboutScreen = () => {
   const goToAbout = () => navigation.navigate('About');
   const goToProfile = () => navigation.navigate('Profile');
 
+  const initialRegion = {
+    latitude: location?.lat || 22.573771068706492,
+    longitude: location?.lon || 88.3562756936158,
+    latitudeDelta: 0.0922,
+    longitudeDelta: 0.0421,
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text style={styles.title}>🌦️ Weather App</Text>
         <Text style={styles.description}>
-          This app provides real-time weather updates, forecasts, and location-based weather info. You can search any city worldwide and view the current temperature, weather conditions, and a 7-day forecast.
+          This app provides real-time weather updates, forecasts, and location-based weather info. You can search any city worldwide and view the current temperature, weather conditions.
         </Text>
+
+        <MapView style={styles.map} initialRegion={initialRegion}>
+          {location && (
+            <Marker
+              coordinate={{
+                latitude: initialRegion.latitude,
+                longitude: initialRegion.longitude,
+              }}
+            />
+          )}
+        </MapView>
 
         {location && (
           <View style={styles.locationInfo}>
@@ -94,6 +113,12 @@ const styles = StyleSheet.create({
   },
   iconButton: { alignItems: 'center' },
   iconLabel: { marginTop: 4, fontSize: 12 },
+  map: {
+    width: '100%',
+    height: 400,
+    borderRadius: 10,
+    marginBottom: 20,
+  },
 });
 
 export default AboutScreen;
