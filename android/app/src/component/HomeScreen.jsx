@@ -27,18 +27,22 @@ const {width, height} = Dimensions.get('window');
 const HomeScreen = () => {
   const navigation = useNavigation();
   const goToHome = () => navigation.navigate('Home');
-  const goToAbout = () => navigation.navigate('About');
+  const goToAbout = () => {
+    navigation.navigate('About', { location: selectedLocation });
+  };
   const goToProfile = () => navigation.navigate('Profile');
 
   const [search, setSearch] = useState(false);
   const [locations, setLocations] = useState([]);
   const [weather, setweather] = useState({});
   const [loading, setLoading] = useState(false);
+  const [selectedLocation, setSelectedLocation] = useState(null);
 
   const handleLocations = loc => {
     setLocations([]);
     setSearch(false);
     setLoading(true);
+     setSelectedLocation(loc);
     // Alert.alert('hiii')
 
     fetchWeatherForecast({

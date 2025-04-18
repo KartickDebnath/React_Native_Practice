@@ -1,11 +1,13 @@
 import React from 'react';
-import {View, Text, StyleSheet, TouchableOpacity, ScrollView} from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 const AboutScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const { location } = route.params || {};
 
   const goToHome = () => navigation.navigate('Home');
   const goToAbout = () => navigation.navigate('About');
@@ -19,18 +21,13 @@ const AboutScreen = () => {
           This app provides real-time weather updates, forecasts, and location-based weather info. You can search any city worldwide and view the current temperature, weather conditions, and a 7-day forecast.
         </Text>
 
-        <Text style={styles.sectionTitle}>Key Features:</Text>
-        <Text style={styles.feature}>• 🔍 Search weather by location</Text>
-        <Text style={styles.feature}>• 📍 View current location weather</Text>
-        <Text style={styles.feature}>• 📅 7-day forecast</Text>
-        <Text style={styles.feature}>• ☁️ Dynamic weather icons</Text>
-        <Text style={styles.feature}>• 🌓 Sunrise, sunset, and moon phase</Text>
-
-        <Text style={styles.sectionTitle}>Built With:</Text>
-        <Text style={styles.feature}>• ⚛️ React Native CLI</Text>
-        <Text style={styles.feature}>• 🌐 WeatherAPI</Text>
-        <Text style={styles.feature}>• 🧭 React Navigation</Text>
-        <Text style={styles.feature}>• 🎨 Custom UI & Icons</Text>
+        {location && (
+          <View style={styles.locationInfo}>
+            <Text style={styles.sectionTitle}>Selected Location:</Text>
+            <Text style={styles.feature}>City: {location.name}</Text>
+            <Text style={styles.feature}>Country: {location.country}</Text>
+          </View>
+        )}
       </ScrollView>
 
       <View style={styles.footer}>
@@ -54,7 +51,7 @@ const AboutScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {flex: 1, justifyContent: 'space-between'},
+  container: { flex: 1, justifyContent: 'space-between' },
   content: {
     padding: 20,
     paddingBottom: 100,
@@ -84,6 +81,9 @@ const styles = StyleSheet.create({
     marginBottom: 5,
     color: '#555',
   },
+  locationInfo: {
+    marginTop: 20,
+  },
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -92,8 +92,8 @@ const styles = StyleSheet.create({
     borderColor: '#ddd',
     backgroundColor: '#f9f9f9',
   },
-  iconButton: {alignItems: 'center'},
-  iconLabel: {marginTop: 4, fontSize: 12},
+  iconButton: { alignItems: 'center' },
+  iconLabel: { marginTop: 4, fontSize: 12 },
 });
 
 export default AboutScreen;
