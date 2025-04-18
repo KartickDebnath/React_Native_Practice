@@ -171,7 +171,7 @@ const HomeScreen = () => {
               contentContainerStyle={{paddingHorizontal: width * 0.04}}
               showsHorizontalScrollIndicator={false}
               style={{marginBottom: height * 0.02}}>
-              <View style={{flexDirection: 'row', gap: width * 0.03}}>
+              <View style={{flexDirection: 'row', gap: width * 0.04}}>
                 {weather?.forecast?.forecastday?.length > 0 ? (
                   weather.forecast.forecastday.map((item, index) => {
                     const isToday = item.date === new Date().toISOString().split('T')[0];
@@ -280,7 +280,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: height * 0.04,
     height: height * 0.15,
-    width: width * 0.25,
+    width: width * 0.30,
     padding: width * 0.02,
     borderRadius: 15,
     borderWidth: 1,
