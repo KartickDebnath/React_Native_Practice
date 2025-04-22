@@ -18,6 +18,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
 import AntDesign from 'react-native-vector-icons/AntDesign';
+import AntDesignNew from 'react-native-vector-icons/AntDesign';
 import {debounce} from 'lodash';
 import {fetchLocation, fetchWeatherForecast} from '../../api/weather.jsx';
 import {weatherImage} from '../../constants/index.jsx';
@@ -31,6 +32,7 @@ const HomeScreen = () => {
     navigation.navigate('About', { location: selectedLocation });
   };
   const goToProfile = () => navigation.navigate('Profile');
+  const goToForecast = () => navigation.navigate('Forecast');
 
   const [search, setSearch] = useState(false);
   const [locations, setLocations] = useState([]);
@@ -224,6 +226,11 @@ const HomeScreen = () => {
           <Text style={styles.iconLabel}>About</Text>
         </TouchableOpacity>
 
+        <TouchableOpacity onPress={goToForecast} style={styles.iconButton}>
+          <AntDesignNew name="clockcircleo" size={28} color="#2196F3" />
+          <Text style={styles.iconLabel}>Forecast</Text>
+        </TouchableOpacity>
+
         <TouchableOpacity onPress={goToProfile} style={styles.iconButton}>
           <Ionicons name="person-outline" size={28} color="#2196F3" />
           <Text style={styles.iconLabel}>Profile</Text>
@@ -305,7 +312,7 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingVertical: height * 0.015,
+    paddingVertical: height * 0.020,
     borderTopWidth: 1,
     borderColor: '#ddd',
     backgroundColor: '#f9f9f9',

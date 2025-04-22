@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Dimensions
 } from 'react-native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -18,6 +19,9 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import IoniconsNew from 'react-native-vector-icons/Ionicons';
 import Ioniconsnotifications from 'react-native-vector-icons/Ionicons';
 import IoniconsSignout from 'react-native-vector-icons/Ionicons';
+import AntDesignNew from 'react-native-vector-icons/AntDesign';
+
+const {width, height} = Dimensions.get('window');
 
 const ProfileScreen = () => {
   const navigation = useNavigation();
@@ -25,6 +29,7 @@ const ProfileScreen = () => {
   const goToHome = () => navigation.navigate('Home');
   const goToAbout = () => navigation.navigate('About');
   const goToProfile = () => navigation.navigate('Profile');
+  const goToForecast = () => navigation.navigate('Forecast');
 
   const [showMobileDetails, setShowMobileDetails] = useState(false);
   const [showEmailDetails, setShowEmailDetails] = useState(false);
@@ -227,6 +232,11 @@ const ProfileScreen = () => {
           <Text style={styles.iconLabel}>About</Text>
         </TouchableOpacity>
 
+         <TouchableOpacity onPress={goToForecast} style={styles.iconButton}>
+                  <AntDesignNew name="clockcircleo" size={28} color="#2196F3" />
+                  <Text style={styles.iconLabel}>Forecast</Text>
+                </TouchableOpacity>
+
         <TouchableOpacity onPress={goToProfile} style={styles.iconButton}>
           <Ionicons name="person-outline" size={28} color="#2196F3" />
           <Text style={styles.iconLabel}>Profile</Text>
@@ -345,7 +355,7 @@ const styles = StyleSheet.create({
   footer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    paddingVertical: 12,
+    paddingVertical: height * 0.020,
     borderTopWidth: 1,
     borderColor: '#ddd',
     backgroundColor: '#f9f9f9',
@@ -354,9 +364,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   iconLabel: {
-    marginTop: 4,
-    fontSize: 12,
-    color: '#2196F3',
+    marginTop: height * 0.005, fontSize: width * 0.03
   },
 });
 
