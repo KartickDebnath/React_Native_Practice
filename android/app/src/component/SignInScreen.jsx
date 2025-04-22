@@ -1,18 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ImageBackground,
-  StyleSheet,
-  SafeAreaView,
-  Platform,
+  View, Text, TextInput, TouchableOpacity,
+  ImageBackground, StyleSheet, SafeAreaView, Alert, Platform,
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import { Formik } from 'formik';
 import * as Yup from 'yup';
 
-// Custom validation for mobile or email
+// Validation schema for email or mobile number
 const mobileOrEmail = Yup.string()
   .test(
     'is-valid-contact',
@@ -32,15 +28,38 @@ const SignInSchema = Yup.object().shape({
 });
 
 const SignInScreen = ({ navigation }) => {
-  const handleSignIn = (values) => {
-    navigation.replace('Home');
+  const [showPasswordSign, setShowPasswordSign] = useState(false);
+
+  const handleSignIn = async (values) => {
+    try {
+      // Fetch existing user data from AsyncStorage
+      let users = await AsyncStorage.getItem('users');
+      users = users ? JSON.parse(users) : [];
+
+      // Add new user to the users array
+      const newUser = {
+        username: values.username,
+        contact: values.contact,
+        password: values.password,
+      };
+
+      users.push(newUser);
+
+      // Save the updated list of users to AsyncStorage
+      await AsyncStorage.setItem('users', JSON.stringify(users));
+
+      // Show success alert
+      Alert.alert('Success', 'Account created! Please log in.');
+
+      // Navigate to the Login screen after successful sign-up
+      navigation.replace('Login');
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
-    <ImageBackground
-      source={require('../assets/loginbackground.jpg')}
-      style={styles.background}
-      resizeMode="cover">
+    <ImageBackground source={require('../assets/loginbackground.jpg')} style={styles.background}>
       <SafeAreaView style={styles.overlay}>
         <Text style={styles.title}>Create Account</Text>
         <Text style={styles.subtitle}>Sign up to use the Weather App</Text>
@@ -49,14 +68,7 @@ const SignInScreen = ({ navigation }) => {
           initialValues={{ username: '', contact: '', password: '' }}
           validationSchema={SignInSchema}
           onSubmit={handleSignIn}>
-          {({
-            handleChange,
-            handleBlur,
-            handleSubmit,
-            values,
-            errors,
-            touched,
-          }) => (
+          {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
             <View style={styles.formBox}>
               <Text style={styles.formTitle}>Sign in with your details</Text>
 
@@ -81,29 +93,33 @@ const SignInScreen = ({ navigation }) => {
                 onChangeText={handleChange('contact')}
                 onBlur={handleBlur('contact')}
                 value={values.contact}
-                keyboardType="email-address"
               />
               {touched.contact && errors.contact && (
                 <Text style={styles.errorText}>{errors.contact}</Text>
               )}
 
               <Text style={styles.label}>Password</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your password"
-                placeholderTextColor="#fff"
-                secureTextEntry={true}
-                onChangeText={handleChange('password')}
-                onBlur={handleBlur('password')}
-                value={values.password}
-              />
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.input}
+                  placeholder="Enter your password"
+                  placeholderTextColor="#fff"
+                  secureTextEntry={!showPasswordSign}
+                  onChangeText={handleChange('password')}
+                  onBlur={handleBlur('password')}
+                  value={values.password}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPasswordSign(!showPasswordSign)}
+                  style={styles.eyeIcon}>
+                  <Ionicons name={showPasswordSign ? 'eye' : 'eye-off'} size={20} color="#fff" />
+                </TouchableOpacity>
+              </View>
               {touched.password && errors.password && (
                 <Text style={styles.errorText}>{errors.password}</Text>
               )}
 
-              <TouchableOpacity
-                style={styles.loginButton}
-                onPress={handleSubmit}>
+              <TouchableOpacity style={styles.loginButton} onPress={handleSubmit}>
                 <Text style={styles.loginButtonText}>Sign In</Text>
               </TouchableOpacity>
 
@@ -120,54 +136,16 @@ const SignInScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   background: { flex: 1 },
-  overlay: {
-    flex: 1,
-    justifyContent: 'center',
-    paddingHorizontal: 24,
-  },
-  title: {
-    fontSize: 28,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    marginBottom: 10,
-    color: '#fff',
-  },
-  subtitle: {
-    textAlign: 'center',
-    color: '#fff',
-    marginBottom: 30,
-  },
-  formBox: {
-    backgroundColor: 'rgba(14, 12, 12, 0.5)',
-    borderRadius: 12,
-    padding: 20,
-  },
-  formTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#fff',
-  },
-  label: {
-    marginTop: 10,
-    fontWeight: '600',
-    color: '#fff',
-  },
+  overlay: { flex: 1, justifyContent: 'center', paddingHorizontal: 24 },
+  title: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', color: '#fff', marginBottom: 10 },
+  subtitle: { textAlign: 'center', color: '#fff', marginBottom: 30 },
+  formBox: { backgroundColor: 'rgba(14, 12, 12, 0.5)', borderRadius: 12, padding: 20 },
+  formTitle: { fontSize: 18, fontWeight: 'bold', color: '#fff', marginBottom: 20 },
+  label: { marginTop: 10, fontWeight: '600', color: '#fff' },
   input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: Platform.OS === 'ios' ? 12 : 8,
-    marginTop: 6,
-    fontSize: 15,
-    color: '#fff',
-  },
-  errorText: {
-    color: '#FF6B6B',
-    fontSize: 13,
-    marginTop: 4,
-    marginBottom: 4,
+    borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
+    paddingHorizontal: 12, paddingVertical: Platform.OS === 'ios' ? 12 : 8,
+    marginTop: 6, fontSize: 15, color: '#fff',
   },
   loginButton: {
     backgroundColor: '#B92025',
@@ -176,17 +154,11 @@ const styles = StyleSheet.create({
     marginTop: 16,
     alignItems: 'center',
   },
-  loginButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
-    fontSize: 16,
-  },
-  link: {
-    color: '#fff',
-    textAlign: 'center',
-    marginTop: 16,
-    textDecorationLine: 'underline',
-  },
+  loginButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
+  link: { color: '#fff', textAlign: 'center', marginTop: 16, textDecorationLine: 'underline' },
+  errorText: { color: '#FF6B6B', fontSize: 13, marginTop: 4, marginBottom: 4 },
+  passwordContainer: { position: 'relative', justifyContent: 'center' },
+  eyeIcon: { position: 'absolute', right: 10, top: 14 },
 });
 
 export default SignInScreen;
