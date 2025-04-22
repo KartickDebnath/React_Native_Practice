@@ -32,13 +32,24 @@ const HomeScreen = () => {
     navigation.navigate('About', { location: selectedLocation });
   };
   const goToProfile = () => navigation.navigate('Profile');
-  const goToForecast = () => navigation.navigate('Forecast');
+  const goToForecast = () => {
+    if (weather && weather.forecast && selectedLocation) {
+      navigation.navigate('Forecast', {
+        forecast: weather.forecast.forecastday,
+        location: selectedLocation,
+      });
+    } else {
+      Alert.alert("Please select a location to view forecast.");
+    }
+  };
+  
 
   const [search, setSearch] = useState(false);
   const [locations, setLocations] = useState([]);
   const [weather, setweather] = useState({});
   const [loading, setLoading] = useState(false);
   const [selectedLocation, setSelectedLocation] = useState(null);
+  const [message, setMessage] = useState('');
 
   const handleLocations = loc => {
     setLocations([]);

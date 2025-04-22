@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
   View,
   Text,
@@ -10,12 +10,14 @@ import {
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesignNew from 'react-native-vector-icons/AntDesign';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 
 const { width, height } = Dimensions.get('window');
 
 const ForecastScreen = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const { forecast = [], location = {} } = route.params || {};
 
   const goToHome = () => navigation.navigate('Home');
   const goToAbout = () => navigation.navigate('About');
@@ -25,14 +27,30 @@ const ForecastScreen = () => {
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false}>
-        {/* You can put your forecast content here */}
         <View style={styles.content}>
-          <Text style={styles.name}>Forecast Information</Text>
-          {/* Add your forecast data here */}
+          <Text style={styles.name}>7-Day Forecast for {location?.name || 'Location'}</Text>
+          {forecast.length > 0 ? (
+            forecast.map((day, index) => (
+              <View key={index} style={styles.card}>
+                <Text style={styles.date}>
+                  {new Date(day.date).toLocaleDateString('en-GB', {
+                    weekday: 'long',
+                    day: 'numeric',
+                    month: 'short',
+                  })}
+                </Text>
+                <Text style={styles.text}>Avg Temp: {day.day.avgtemp_c}°C</Text>
+                <Text style={styles.text}>Condition: {day.day.condition.text}</Text>
+                <Text style={styles.text}>Sunrise: {day.astro.sunrise}</Text>
+                <Text style={styles.text}>Sunset: {day.astro.sunset}</Text>
+              </View>
+            ))
+          ) : (
+            <Text style={styles.text}>No forecast data available.</Text>
+          )}
         </View>
       </ScrollView>
 
-      {/* Footer Navigation */}
       <View style={styles.footer}>
         <TouchableOpacity onPress={goToHome} style={styles.iconButton}>
           <AntDesignIcon name="home" size={28} color="#2196F3" />
@@ -72,8 +90,25 @@ const styles = StyleSheet.create({
   name: {
     fontSize: 22,
     fontWeight: '600',
-    marginBottom: 8,
+    marginBottom: 16,
     color: '#8c827f',
+    textAlign: 'center'
+  },
+  card: {
+    backgroundColor: '#e0f7fa',
+    borderRadius: 10,
+    padding: 15,
+    marginBottom: 15,
+    width: '100%',
+  },
+  date: {
+    fontSize: 16,
+    fontWeight: '700',
+    marginBottom: 5,
+  },
+  text: {
+    fontSize: 14,
+    marginBottom: 3,
   },
   footer: {
     flexDirection: 'row',
