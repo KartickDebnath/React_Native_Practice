@@ -1,4 +1,4 @@
-import React from 'react';
+import React , {useContext } from 'react';
 import {
   View,
   Text,
@@ -11,6 +11,8 @@ import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesignNew from 'react-native-vector-icons/AntDesign';
 import { useNavigation, useRoute } from '@react-navigation/native';
+import { WeatherContext } from '../component/WeatherContext';
+
 
 const { width, height } = Dimensions.get('window');
 
@@ -23,6 +25,7 @@ const ForecastScreen = () => {
   const goToAbout = () => navigation.navigate('About');
   const goToProfile = () => navigation.navigate('Profile');
   const goToForecast = () => navigation.navigate('Forecast');
+  const { selectedLocation } = useContext(WeatherContext);
 
   return (
     <View style={styles.container}>

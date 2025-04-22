@@ -1,4 +1,4 @@
-import React, {useState, useCallback} from 'react';
+import React, { useState, useCallback, useContext } from 'react';
 import {
   View,
   Text,
@@ -12,21 +12,29 @@ import {
   Dimensions,
   Alert,
 } from 'react-native';
-import {useNavigation} from '@react-navigation/native';
+import { useNavigation } from '@react-navigation/native';
 import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
 import Feather from 'react-native-vector-icons/Feather';
-import AntDesign from 'react-native-vector-icons/AntDesign';
 import AntDesignNew from 'react-native-vector-icons/AntDesign';
-import {debounce} from 'lodash';
-import {fetchLocation, fetchWeatherForecast} from '../../api/weather.jsx';
-import {weatherImage} from '../../constants/index.jsx';
+import { debounce } from 'lodash';
 
-const {width, height} = Dimensions.get('window');
+import { fetchLocation, fetchWeatherForecast } from '../../api/weather.jsx';
+import { weatherImage } from '../../constants/index.jsx';
+import { WeatherContext } from '../component/WeatherContext.jsx';
+
+const { width, height } = Dimensions.get('window');
 
 const HomeScreen = () => {
   const navigation = useNavigation();
+
+  const { weather, setWeather, selectedLocation, setSelectedLocation } = useContext(WeatherContext);
+
+  const [search, setSearch] = useState(false);
+  const [locations, setLocations] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const goToHome = () => navigation.navigate('Home');
   const goToAbout = () => {
     navigation.navigate('About', { location: selectedLocation });
@@ -42,21 +50,12 @@ const HomeScreen = () => {
       Alert.alert("Please select a location to view forecast.");
     }
   };
-  
-
-  const [search, setSearch] = useState(false);
-  const [locations, setLocations] = useState([]);
-  const [weather, setweather] = useState({});
-  const [loading, setLoading] = useState(false);
-  const [selectedLocation, setSelectedLocation] = useState(null);
-  const [message, setMessage] = useState('');
 
   const handleLocations = loc => {
     setLocations([]);
     setSearch(false);
     setLoading(true);
-     setSelectedLocation(loc);
-    // Alert.alert('hiii')
+    setSelectedLocation(loc);
 
     fetchWeatherForecast({
       name: loc.name,
@@ -64,7 +63,7 @@ const HomeScreen = () => {
     })
       .then(data => {
         setTimeout(() => {
-          setweather(data);
+          setWeather(data); // ✅ FIXED
           setLoading(false);
         }, 500);
       })
@@ -72,9 +71,8 @@ const HomeScreen = () => {
   };
 
   const handleSearch = value => {
-    // Alert.alert("current size = "+value.length);
     if (value.length > 2) {
-      fetchLocation({name: value}).then(data => {
+      fetchLocation({ name: value }).then(data => {
         setLocations(data || []);
       });
     } else {
@@ -83,14 +81,16 @@ const HomeScreen = () => {
   };
 
   const handleTextDebounce = useCallback(debounce(handleSearch, 1200), []);
-  const {current, location} = weather;
+  const { current, location } = weather || {};
+
 
   return (
     <>
       <ImageBackground
         source={require('../assets/weathernew.jpg')}
         style={styles.background}
-        resizeMode="cover">
+        resizeMode="cover"
+      >
         {loading ? (
           <View style={styles.loader}>
             <ActivityIndicator size="large" color="#fff" />
@@ -109,10 +109,9 @@ const HomeScreen = () => {
                       autoFocus
                     />
                   ) : null}
-                  <TouchableOpacity onPress={() => setSearch(!search)} style={{paddingVertical: height * 0.01}}>
+                  <TouchableOpacity onPress={() => setSearch(!search)} style={{ paddingVertical: height * 0.01 }}>
                     <Ionicons name="search-outline" size={24} color="#000" />
                   </TouchableOpacity>
-                  
                 </View>
 
                 {locations.length > 0 && search && (
@@ -129,7 +128,8 @@ const HomeScreen = () => {
                             flexDirection: 'row',
                             alignItems: 'center',
                             paddingVertical: height * 0.008,
-                          }}>
+                          }}
+                        >
                           <Ionicons name="location-outline" size={24} color="#000" />
                           <Text style={styles.dropdownItem}>
                             {loc?.name}, {loc?.country}
@@ -142,7 +142,6 @@ const HomeScreen = () => {
               </View>
 
               <View style={styles.locationBox}>
-                {/* <Text style={styles.locationText}>{location?.name || 'Location'},</Text> */}
                 <Text style={styles.locationText}>{location?.name || 'Location'},</Text>
                 <Text style={styles.locationText}>{location?.country || 'Country'}</Text>
               </View>
@@ -156,7 +155,7 @@ const HomeScreen = () => {
               />
             </View>
 
-            <View style={{marginTop: height * 0.02}}>
+            <View style={{ marginTop: height * 0.02 }}>
               <Text style={styles.tempText}>{current?.temp_c || 'Temperature'}°C</Text>
               <Text style={styles.conditionText}>{current?.condition?.text}</Text>
             </View>
@@ -179,16 +178,17 @@ const HomeScreen = () => {
             </View>
 
             <View style={styles.forecastLabel}>
-              <AntDesign name="calendar" size={28} color="#fff" />
+              <AntDesignIcon name="calendar" size={28} color="#fff" />
               <Text style={styles.forecastLabelText}>Daily forecast</Text>
             </View>
 
             <ScrollView
               horizontal
-              contentContainerStyle={{paddingHorizontal: width * 0.04}}
+              contentContainerStyle={{ paddingHorizontal: width * 0.04 }}
               showsHorizontalScrollIndicator={false}
-              style={{marginBottom: height * 0.02}}>
-              <View style={{flexDirection: 'row', gap: width * 0.04}}>
+              style={{ marginBottom: height * 0.02 }}
+            >
+              <View style={{ flexDirection: 'row', gap: width * 0.04 }}>
                 {weather?.forecast?.forecastday?.length > 0 ? (
                   weather.forecast.forecastday.map((item, index) => {
                     const isToday = item.date === new Date().toISOString().split('T')[0];
@@ -217,7 +217,7 @@ const HomeScreen = () => {
                   })
                 ) : (
                   <View style={styles.forecastEmptyCard}>
-                    <Text style={{color: 'white', textAlign: 'center'}}>Search a location to view forecast</Text>
+                    <Text style={{ color: 'white', textAlign: 'center' }}>Search a location to view forecast</Text>
                   </View>
                 )}
               </View>

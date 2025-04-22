@@ -1,4 +1,4 @@
-import React from 'react';
+import React , {useContext } from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import AntDesignIcon from 'react-native-vector-icons/AntDesign';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AntDesignNew from 'react-native-vector-icons/AntDesign';
 import MapView, {Marker} from 'react-native-maps';
+import { WeatherContext } from '../component/WeatherContext.jsx';
 
 const {width, height} = Dimensions.get('window');
 
@@ -19,6 +20,8 @@ const AboutScreen = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const {location} = route.params || {};
+
+  const { selectedLocation } = useContext(WeatherContext);
 
   const goToHome = () => navigation.navigate('Home');
   const goToAbout = () => navigation.navigate('About');
