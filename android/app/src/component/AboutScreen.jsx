@@ -27,10 +27,9 @@ const AboutScreen = () => {
   const goToAbout = () => navigation.navigate('About');
   const goToProfile = () => navigation.navigate('Profile');
   const goToForecast = () => navigation.navigate('Forecast');
-
   const initialRegion = {
-    latitude: location?.lat || 22.573771068706492,
-    longitude: location?.lon || 88.3562756936158,
+    latitude: selectedLocation?.lat || 22.573,
+    longitude: selectedLocation?.lon || 88.356,
     latitudeDelta: 0.0922,
     longitudeDelta: 0.0421,
   };
@@ -38,29 +37,22 @@ const AboutScreen = () => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.title}>🌦️ Weather App</Text>
+        <Text style={styles.title}>Weather App</Text>
         <Text style={styles.description}>
-          This app provides real-time weather updates, forecasts, and
-          location-based weather info. You can search any city worldwide and
-          view the current temperature, weather conditions.
+          This app provides real-time weather updates and forecasts...
         </Text>
 
         <MapView style={styles.map} initialRegion={initialRegion}>
-          {location && (
-            <Marker
-              coordinate={{
-                latitude: initialRegion.latitude,
-                longitude: initialRegion.longitude,
-              }}
-            />
+          {selectedLocation && (
+            <Marker coordinate={{ latitude: initialRegion.latitude, longitude: initialRegion.longitude }} />
           )}
         </MapView>
 
-        {location && (
+        {selectedLocation && (
           <View style={styles.locationInfo}>
             <Text style={styles.sectionTitle}>Selected Location:</Text>
-            <Text style={styles.feature}>City: {location.name}</Text>
-            <Text style={styles.feature}>Country: {location.country}</Text>
+            <Text style={styles.feature}>City: {selectedLocation.name}</Text>
+            <Text style={styles.feature}>Country: {selectedLocation.country}</Text>
           </View>
         )}
       </ScrollView>

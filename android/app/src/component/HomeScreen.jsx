@@ -36,18 +36,23 @@ const HomeScreen = () => {
   const [loading, setLoading] = useState(false);
 
   const goToHome = () => navigation.navigate('Home');
-  const goToAbout = () => {
-    navigation.navigate('About', { location: selectedLocation });
-  };
+  // const goToAbout = () => {
+  //   navigation.navigate('About', { location: selectedLocation });
+  // };
   const goToProfile = () => navigation.navigate('Profile');
   const goToForecast = () => {
     if (weather && weather.forecast && selectedLocation) {
-      navigation.navigate('Forecast', {
-        forecast: weather.forecast.forecastday,
-        location: selectedLocation,
-      });
+      navigation.navigate('Forecast'); // 👈 No route params
     } else {
       Alert.alert("Please select a location to view forecast.");
+    }
+  };
+  
+  const goToAbout = () => {
+    if (selectedLocation) {
+      navigation.navigate('About'); // 👈 No route params
+    } else {
+      Alert.alert("Please select a location to view details.");
     }
   };
 

@@ -17,21 +17,23 @@ import { WeatherContext } from '../component/WeatherContext';
 const { width, height } = Dimensions.get('window');
 
 const ForecastScreen = () => {
-  const navigation = useNavigation();
+  // const navigation = useNavigation();
   const route = useRoute();
-  const { forecast = [], location = {} } = route.params || {};
+  const navigation = useNavigation();
+  const { weather, selectedLocation } = useContext(WeatherContext); // 👈 Use context
 
+  const forecast = weather?.forecast?.forecastday || [];
   const goToHome = () => navigation.navigate('Home');
   const goToAbout = () => navigation.navigate('About');
   const goToProfile = () => navigation.navigate('Profile');
   const goToForecast = () => navigation.navigate('Forecast');
-  const { selectedLocation } = useContext(WeatherContext);
+  // const { selectedLocation } = useContext(WeatherContext);
 
   return (
     <View style={styles.container}>
-      <ScrollView showsVerticalScrollIndicator={false}>
+       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
-          <Text style={styles.name}>7-Day Forecast for {location?.name || 'Location'}</Text>
+          <Text style={styles.name}>7-Day Forecast for {selectedLocation?.name || 'Location'}</Text>
           {forecast.length > 0 ? (
             forecast.map((day, index) => (
               <View key={index} style={styles.card}>
