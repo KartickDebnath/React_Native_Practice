@@ -9,6 +9,7 @@ export const weatherImage={
     'Moderate or heavy rain with thunder':require('../src/assets/heavyrain.png'),
     'Sunny':require('../src/assets/sun.png'),
     'Clear':require('../src/assets/sun.png'),
+    'Clear ':require('../src/assets/sun.png'),
     'Partly cloudy':require('../src/assets/partlycloudy.png'),
     'Partly Cloudy':require('../src/assets/partlycloudy.png'),
     'Partly Cloudy ':require('../src/assets/partlycloudy.png'),
@@ -20,5 +21,7 @@ export const weatherImage={
     'other':require('../src/assets/moderaterain.png'),
     'Mist':require('../src/assets/mist.png'),
     'cloudy':require('../src/assets/cloud.png'),
+    'Cloudy ':require('../src/assets/cloud.png'),
     'Overcast':require('../src/assets/cloud.png'),
+    'Overcast ':require('../src/assets/cloud.png'),
 }
