@@ -7,6 +7,7 @@ import AboutScreen from './android/app/src/component/AboutScreen';
 import ForecastScreen from './android/app/src/component/ForecastScreen';
 import ProfileScreen from './android/app/src/component/ProfileScreen';
 import { WeatherProvider } from './android/app/src/component/WeatherContext'; // import your context
+import SignInScreen from './android/app/src/component/SignInScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -15,6 +16,7 @@ export default function App() {
     <WeatherProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Login" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="SignIn" component={SignInScreen} />
           <Stack.Screen name="Login" component={LoginScreen} />
           <Stack.Screen name="Home" component={HomeScreen} />
           <Stack.Screen name="About" component={AboutScreen} />

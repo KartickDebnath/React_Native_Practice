@@ -9,80 +9,107 @@ import {
   SafeAreaView,
   Platform,
 } from 'react-native';
-// import CheckBox from '@react-native-community/checkbox'; 
-import { Ionicons } from '@expo/vector-icons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import { Formik } from 'formik';
+import * as Yup from 'yup';
+
+// Validation schema using Yup
+const LoginSchema = Yup.object().shape({
+  username: Yup.string().required('Username is required'),
+  password: Yup.string()
+    .min(6, 'Password must be at least 6 characters')
+    .required('Password is required'),
+});
 
 const LoginScreen = ({ navigation }) => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  const handleLogin = () => {
-    // You can add validation here
-    if (username && password) {
-      navigation.replace('Home'); // ✅ Go to Home
-    } else {
-      alert('Enter username and password');
-    }
+  const handleLogin = (values) => {
+    // Proceed with login logic (e.g., navigation)
+    navigation.replace('Home');
   };
 
   return (
     <ImageBackground
-      // source={{
-      //   uri: 'https://images.unsplash.com/photo-1508919801845-fc2ae1bc2a28?auto=format&fit=crop&w=800&q=80',
-      // }}
-      style={styles.background}
       source={require('../assets/loginbackground.jpg')}
-      resizeMode="cover"
-    >
+      style={styles.background}
+      resizeMode="cover">
       <SafeAreaView style={styles.overlay}>
-        <Text style={styles.title}>Welcome To!</Text>
+        <Text style={styles.title}>Welcome Back!</Text>
         <Text style={styles.subtitle}>
-          Continue tracking your progress after logging in to your account.
+          Login to continue using the Weather App
         </Text>
 
-        <View style={styles.formBox}>
-          <Text style={styles.formTitle}>Log in your account</Text>
+        <Formik
+          initialValues={{ username: '', password: '' }}
+          validationSchema={LoginSchema}
+          onSubmit={handleLogin}>
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
+            <View style={styles.formBox}>
+              <Text style={styles.formTitle}>Log in to your account</Text>
 
-          <Text style={styles.label}>Username/Mobile</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Enter your username"
-            placeholderTextColor="#fff"
-            value={username}
-            onChangeText={setUsername}
-          />
+              <Text style={styles.label}>Username</Text>
+              <TextInput
+                style={styles.input}
+                placeholder="Enter your username"
+                placeholderTextColor="#fff"
+                onChangeText={handleChange('username')}
+                onBlur={handleBlur('username')}
+                value={values.username}
+              />
+              {touched.username && errors.username && (
+                <Text style={styles.errorText}>{errors.username}</Text>
+              )}
 
-          <Text style={styles.label}>Password</Text>
-          <View style={styles.passwordContainer}>
-            <TextInput
-              style={[styles.input, { flex: 1 }]}
-              placeholder="Enter your password"
-              placeholderTextColor="#fff"
-              secureTextEntry={!showPassword}
-              value={password}
-              onChangeText={setPassword}
-            />
-            <TouchableOpacity onPress={() => setShowPassword(!showPassword)}>
-              {/* <Ionicons name={showPassword ? 'eye-off' : 'eye'} size={24} color="#666" /> */}
-            </TouchableOpacity>
-          </View>
+              <Text style={styles.label}>Password</Text>
+              <View style={styles.passwordContainer}>
+                <TextInput
+                  style={styles.passwordInput}
+                  placeholder="Enter your password"
+                  placeholderTextColor="#fff"
+                  secureTextEntry={!showPassword}
+                  onChangeText={handleChange('password')}
+                  onBlur={handleBlur('password')}
+                  value={values.password}
+                />
+                <TouchableOpacity
+                  onPress={() => setShowPassword(!showPassword)}
+                  style={styles.eyeIcon}>
+                  <Ionicons
+                    name={showPassword ? 'eye-off' : 'eye'}
+                    size={20}
+                    color="#fff"
+                  />
+                </TouchableOpacity>
+              </View>
+              {touched.password && errors.password && (
+                <Text style={styles.errorText}>{errors.password}</Text>
+              )}
 
-          <View style={styles.optionsRow}>
-            <View style={styles.rememberMe}>
-              {/* <CheckBox value={rememberMe} onValueChange={setRememberMe} tintColors={{ true: '#B92025', false: '#ccc' }} /> */}
-              <Text style={styles.rememberText}>Remember me</Text>
+              <View style={styles.optionsRow}>
+                <Text style={styles.rememberText}>Remember Me</Text>
+                <TouchableOpacity>
+                  <Text style={styles.forgotText}>Forgot Password?</Text>
+                </TouchableOpacity>
+              </View>
+
+              <TouchableOpacity style={styles.loginButton} onPress={handleSubmit}>
+                <Text style={styles.loginButtonText}>Login</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => navigation.replace('SignIn')}>
+                <Text style={styles.link}>New here? Create an account</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity>
-              <Text style={styles.forgotText}>Forgot Password?</Text>
-            </TouchableOpacity>
-          </View>
-
-          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-            <Text style={styles.loginButtonText}>Login</Text>
-          </TouchableOpacity>
-        </View>
+          )}
+        </Formik>
       </SafeAreaView>
     </ImageBackground>
   );
@@ -96,42 +123,34 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     paddingHorizontal: 24,
-    // backgroundColor: 'rgba(255, 255, 255, 0.85)',
   },
   title: {
     fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
     marginBottom: 10,
-    color: '#ffff',
+    color: '#fff',
   },
   subtitle: {
     textAlign: 'center',
-    color: '#ffff',
+    color: '#fff',
     marginBottom: 30,
   },
   formBox: {
-    backgroundColor: '#fff',
+    backgroundColor: 'rgba(14, 12, 12, 0.5)',
     borderRadius: 12,
     padding: 20,
-    // elevation: 5,
-    // shadowColor: '#000',
-    // shadowOpacity: 0.15,
-    // shadowRadius: 6,
-    // shadowOffset: { width: 0, height: 2 },
-    backgroundColor: 'rgba(14, 12, 12, 0.5)',
-backdropFilter: 'blur(5px)',
   },
   formTitle: {
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 20,
-    color: '#ffff',
+    color: '#fff',
   },
   label: {
     marginTop: 10,
     fontWeight: '600',
-    color: '#ffff',
+    color: '#fff',
   },
   input: {
     borderWidth: 1,
@@ -141,12 +160,26 @@ backdropFilter: 'blur(5px)',
     paddingVertical: Platform.OS === 'ios' ? 12 : 8,
     marginTop: 6,
     fontSize: 15,
-    color: '#ffff',
+    color: '#fff',
   },
   passwordContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    position: 'relative',
+    justifyContent: 'center',
     marginTop: 6,
+  },
+  passwordInput: {
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingLeft: 12,
+    paddingRight: 40, // extra space to prevent overlap with eye icon
+    fontSize: 15,
+    color: '#fff',
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 0,
+    paddingRight: 8,
   },
   optionsRow: {
     flexDirection: 'row',
@@ -154,18 +187,14 @@ backdropFilter: 'blur(5px)',
     alignItems: 'center',
     marginVertical: 12,
   },
-  rememberMe: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   rememberText: {
-    marginLeft: 6,
     fontSize: 13,
-    color: '#ffff',
+    color: '#fff',
   },
   forgotText: {
     fontSize: 13,
-    color: '#ffff',
+    color: '#fff',
+    textDecorationLine: 'underline',
   },
   loginButton: {
     backgroundColor: '#B92025',
@@ -179,70 +208,18 @@ backdropFilter: 'blur(5px)',
     fontWeight: 'bold',
     fontSize: 16,
   },
+  link: {
+    color: '#fff',
+    textAlign: 'center',
+    marginTop: 16,
+    textDecorationLine: 'underline',
+  },
+  errorText: {
+    color: '#FF6B6B',
+    fontSize: 13,
+    marginTop: 4,
+    marginBottom: 4,
+  },
 });
 
 export default LoginScreen;
-
-
-
-// import React, { useState } from 'react';
-// import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-
-// const LoginScreen = ({ navigation }) => {
-//   const [username, setUsername] = useState('');
-//   const [password, setPassword] = useState('');
-
-//   const handleLogin = () => {
-//     // You can add validation here
-//     if (username && password) {
-//       navigation.replace('Home'); // ✅ Go to Home
-//     } else {
-//       alert('Enter username and password');
-//     }
-//   };
-
-//   return (
-//     <View style={styles.container}>
-//       <Text style={styles.title}>Login</Text>
-//       <TextInput
-//         placeholder="Username"
-//         value={username}
-//         onChangeText={setUsername}
-//         style={styles.input}
-//       />
-//       <TextInput
-//         placeholder="Password"
-//         value={password}
-//         onChangeText={setPassword}
-//         style={styles.input}
-//         secureTextEntry
-//       />
-//       <TouchableOpacity style={styles.button} onPress={handleLogin}>
-//         <Text style={styles.buttonText}>Login</Text>
-//       </TouchableOpacity>
-//     </View>
-//   );
-// };
-
-// const styles = StyleSheet.create({
-//   container: { flex: 1, justifyContent: 'center', alignItems: 'center', padding: 20 },
-//   title: { fontSize: 24, marginBottom: 20 },
-//   input: {
-//     width: '100%',
-//     borderWidth: 1,
-//     padding: 10,
-//     borderRadius: 8,
-//     marginVertical: 10,
-//   },
-//   button: {
-//     backgroundColor: '#B92025',
-//     padding: 14,
-//     borderRadius: 8,
-//     marginTop: 10,
-//     width: '100%',
-//     alignItems: 'center',
-//   },
-//   buttonText: { color: '#fff', fontSize: 16, fontWeight: 'bold' },
-// });
-
-// export default LoginScreen;
