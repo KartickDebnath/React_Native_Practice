@@ -57,7 +57,7 @@ const LoginScreen = ({ navigation }) => {
 
               <Text style={styles.label}>Username</Text>
               <TextInput
-                style={styles.input}
+                style={styles.passwordInput}
                 placeholder="Enter your username"
                 placeholderTextColor="#fff"
                 onChangeText={handleChange('username')}
@@ -152,16 +152,16 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#fff',
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: Platform.OS === 'ios' ? 12 : 8,
-    marginTop: 6,
-    fontSize: 15,
-    color: '#fff',
-  },
+  // input: {
+  //   borderWidth: 1,
+  //   borderColor: '#ccc',
+  //   borderRadius: 8,
+  //   paddingHorizontal: 12,
+  //   paddingVertical: Platform.OS === 'ios' ? 12 : 8,
+  //   marginTop: 6,
+  //   fontSize: 15,
+  //   color: '#fff',
+  // },
   passwordContainer: {
     position: 'relative',
     justifyContent: 'center',
