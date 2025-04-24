@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
-  View, Text, TextInput, TouchableOpacity,
-  ImageBackground, StyleSheet, SafeAreaView, Alert, Platform,
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  ImageBackground,
+  StyleSheet,
+  SafeAreaView,
+  Alert,
+  Platform,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import { Formik } from 'formik';
+import {Formik} from 'formik';
 import * as Yup from 'yup';
+import Toast from 'react-native-toast-message'; // ✅ Import Toast
 
 // Validation schema for email or mobile number
 const mobileOrEmail = Yup.string()
@@ -14,8 +22,7 @@ const mobileOrEmail = Yup.string()
     'is-valid-contact',
     'Enter a valid email or 10-digit mobile number',
     value =>
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ||
-      /^[0-9]{10}$/.test(value)
+      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || /^[0-9]{10}$/.test(value),
   )
   .required('Mobile or Email is required');
 
@@ -27,10 +34,10 @@ const SignInSchema = Yup.object().shape({
     .required('Password is required'),
 });
 
-const SignInScreen = ({ navigation }) => {
+const SignInScreen = ({navigation}) => {
   const [showPasswordSign, setShowPasswordSign] = useState(false);
 
-  const handleSignIn = async (values) => {
+  const handleSignIn = async values => {
     try {
       // Fetch existing user data from AsyncStorage
       let users = await AsyncStorage.getItem('users');
@@ -49,26 +56,42 @@ const SignInScreen = ({ navigation }) => {
       await AsyncStorage.setItem('users', JSON.stringify(users));
 
       // Show success alert
-      Alert.alert('Success', 'Account created! Please log in.');
+      // Alert.alert('Success', 'Account created! Please log in.');
+      Toast.show({
+        type: 'success',
+        text1: 'Account created!',
+        text2: 'Please log in to continue.',
+      });
 
       // Navigate to the Login screen after successful sign-up
-      navigation.replace('Login');
+      setTimeout(() => {
+        navigation.replace('Login');
+      }, 500);
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <ImageBackground source={require('../assets/loginbackground.jpg')} style={styles.background}>
+    <ImageBackground
+      source={require('../assets/loginbackground.jpg')}
+      style={styles.background}>
       <SafeAreaView style={styles.overlay}>
         <Text style={styles.title}>Create Account</Text>
         <Text style={styles.subtitle}>Sign up to use the Weather App</Text>
 
         <Formik
-          initialValues={{ username: '', contact: '', password: '' }}
+          initialValues={{username: '', contact: '', password: ''}}
           validationSchema={SignInSchema}
           onSubmit={handleSignIn}>
-          {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
+          {({
+            handleChange,
+            handleBlur,
+            handleSubmit,
+            values,
+            errors,
+            touched,
+          }) => (
             <View style={styles.formBox}>
               <Text style={styles.formTitle}>Sign in with your details</Text>
 
@@ -112,14 +135,20 @@ const SignInScreen = ({ navigation }) => {
                 <TouchableOpacity
                   onPress={() => setShowPasswordSign(!showPasswordSign)}
                   style={styles.eyeIcon}>
-                  <Ionicons name={showPasswordSign ? 'eye' : 'eye-off'} size={20} color="#fff" />
+                  <Ionicons
+                    name={showPasswordSign ? 'eye' : 'eye-off'}
+                    size={20}
+                    color="#fff"
+                  />
                 </TouchableOpacity>
               </View>
               {touched.password && errors.password && (
                 <Text style={styles.errorText}>{errors.password}</Text>
               )}
 
-              <TouchableOpacity style={styles.loginButton} onPress={handleSubmit}>
+              <TouchableOpacity
+                style={styles.loginButton}
+                onPress={handleSubmit}>
                 <Text style={styles.loginButtonText}>Sign In</Text>
               </TouchableOpacity>
 
@@ -130,22 +159,43 @@ const SignInScreen = ({ navigation }) => {
           )}
         </Formik>
       </SafeAreaView>
+      <Toast />
     </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  background: { flex: 1 },
-  overlay: { flex: 1, justifyContent: 'center', paddingHorizontal: 24 },
-  title: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', color: '#fff', marginBottom: 10 },
-  subtitle: { textAlign: 'center', color: '#fff', marginBottom: 30 },
-  formBox: { backgroundColor: 'rgba(14, 12, 12, 0.5)', borderRadius: 12, padding: 20 },
-  formTitle: { fontSize: 18, fontWeight: 'bold', color: '#fff', marginBottom: 20 },
-  label: { marginTop: 10, fontWeight: '600', color: '#fff' },
+  background: {flex: 1},
+  overlay: {flex: 1, justifyContent: 'center', paddingHorizontal: 24},
+  title: {
+    fontSize: 28,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: '#fff',
+    marginBottom: 10,
+  },
+  subtitle: {textAlign: 'center', color: '#fff', marginBottom: 30},
+  formBox: {
+    backgroundColor: 'rgba(14, 12, 12, 0.5)',
+    borderRadius: 12,
+    padding: 20,
+  },
+  formTitle: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    color: '#fff',
+    marginBottom: 20,
+  },
+  label: {marginTop: 10, fontWeight: '600', color: '#fff'},
   input: {
-    borderWidth: 1, borderColor: '#ccc', borderRadius: 8,
-    paddingHorizontal: 12, paddingVertical: Platform.OS === 'ios' ? 12 : 8,
-    marginTop: 6, fontSize: 15, color: '#fff',
+    borderWidth: 1,
+    borderColor: '#ccc',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: Platform.OS === 'ios' ? 12 : 8,
+    marginTop: 6,
+    fontSize: 15,
+    color: '#fff',
   },
   loginButton: {
     backgroundColor: '#B92025',
@@ -154,11 +204,16 @@ const styles = StyleSheet.create({
     marginTop: 16,
     alignItems: 'center',
   },
-  loginButtonText: { color: '#fff', fontWeight: 'bold', fontSize: 16 },
-  link: { color: '#fff', textAlign: 'center', marginTop: 16, textDecorationLine: 'underline' },
-  errorText: { color: '#FF6B6B', fontSize: 13, marginTop: 4, marginBottom: 4 },
-  passwordContainer: { position: 'relative', justifyContent: 'center' },
-  eyeIcon: { position: 'absolute', right: 10, top: 14 },
+  loginButtonText: {color: '#fff', fontWeight: 'bold', fontSize: 16},
+  link: {
+    color: '#fff',
+    textAlign: 'center',
+    marginTop: 16,
+    textDecorationLine: 'underline',
+  },
+  errorText: {color: '#FF6B6B', fontSize: 13, marginTop: 4, marginBottom: 4},
+  passwordContainer: {position: 'relative', justifyContent: 'center'},
+  eyeIcon: {position: 'absolute', right: 10, top: 14},
 });
 
 export default SignInScreen;
