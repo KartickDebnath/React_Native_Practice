@@ -1,87 +1,61 @@
-import React, {useState} from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  ImageBackground,
-  StyleSheet,
-  SafeAreaView,
-  Alert,
-  Platform,
-} from 'react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ImageBackground, StyleSheet, SafeAreaView, Alert } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {Formik} from 'formik';
+import { Formik } from 'formik';
 import * as Yup from 'yup';
-import Toast from 'react-native-toast-message'; // ✅ Import Toast
-
-// Validation schema for email or mobile number
-const mobileOrEmail = Yup.string()
-  .test(
-    'is-valid-contact',
-    'Enter a valid email or 10-digit mobile number',
-    value =>
-      /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || /^[0-9]{10}$/.test(value),
-  )
-  .required('Mobile or Email is required');
 
 const SignInSchema = Yup.object().shape({
   username: Yup.string().required('Username is required'),
-  contact: mobileOrEmail,
+  contact: Yup.string()
+    .test(
+      'is-valid-contact',
+      'Enter a valid email or 10-digit mobile number',
+      value =>
+        /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) || /^[0-9]{10}$/.test(value),
+    )
+    .required('Contact is required'),
   password: Yup.string()
     .min(6, 'Password must be at least 6 characters')
     .required('Password is required'),
 });
 
-const SignInScreen = ({navigation}) => {
-  const [showPasswordSign, setShowPasswordSign] = useState(false);
+const SignInScreen = ({ navigation }) => {
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSignIn = async values => {
     try {
-      // Fetch existing user data from AsyncStorage
-      let users = await AsyncStorage.getItem('users');
-      users = users ? JSON.parse(users) : [];
-
-      // Add new user to the users array
-      const newUser = {
-        username: values.username,
-        contact: values.contact,
-        password: values.password,
-      };
-
-      users.push(newUser);
-
-      // Save the updated list of users to AsyncStorage
-      await AsyncStorage.setItem('users', JSON.stringify(users));
-
-      // Show success alert
-      // Alert.alert('Success', 'Account created! Please log in.');
-      Toast.show({
-        type: 'success',
-        text1: 'Account created!',
-        text2: 'Please log in to continue.',
+      const response = await fetch('http://192.168.0.135:3000/Login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: values.username,
+          mobile: values.contact,
+          password: values.password,
+        }),
       });
 
-      // Navigate to the Login screen after successful sign-up
-      setTimeout(() => {
-        navigation.replace('Login');
-      }, 500);
+      const data = await response.json();
+
+      if (response.ok) {
+        Alert.alert('Success', 'Account created successfully!', [
+          { text: 'OK', onPress: () => navigation.replace('Login') },
+        ]);
+      } else {
+        Alert.alert('Error', data.error || 'Something went wrong.');
+      }
     } catch (error) {
-      console.log(error);
+      Alert.alert('Network Error', error.message);
     }
   };
 
   return (
-    <ImageBackground
-      source={require('../assets/loginbackground.jpg')}
-      style={styles.background}>
+    <ImageBackground source={require('../assets/loginbackground.jpg')} style={styles.background}>
       <SafeAreaView style={styles.overlay}>
         <Text style={styles.title}>Create Account</Text>
         <Text style={styles.subtitle}>Sign up to use the Weather App</Text>
 
         <Formik
-          initialValues={{username: '', contact: '', password: ''}}
+          initialValues={{ username: '', contact: '', password: '' }}
           validationSchema={SignInSchema}
           onSubmit={handleSignIn}>
           {({
@@ -127,16 +101,16 @@ const SignInScreen = ({navigation}) => {
                   style={styles.input}
                   placeholder="Enter your password"
                   placeholderTextColor="#fff"
-                  secureTextEntry={!showPasswordSign}
+                  secureTextEntry={!showPassword}
                   onChangeText={handleChange('password')}
                   onBlur={handleBlur('password')}
                   value={values.password}
                 />
                 <TouchableOpacity
-                  onPress={() => setShowPasswordSign(!showPasswordSign)}
+                  onPress={() => setShowPassword(!showPassword)}
                   style={styles.eyeIcon}>
                   <Ionicons
-                    name={showPasswordSign ? 'eye' : 'eye-off'}
+                    name={showPassword ? 'eye' : 'eye-off'}
                     size={20}
                     color="#fff"
                   />
@@ -159,7 +133,6 @@ const SignInScreen = ({navigation}) => {
           )}
         </Formik>
       </SafeAreaView>
-      <Toast />
     </ImageBackground>
   );
 };
